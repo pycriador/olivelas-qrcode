@@ -1,21 +1,21 @@
 Write-Host "===================================================" -ForegroundColor Cyan
-Write-Host "       Olivelas QR Code Studio - Inicializador     " -ForegroundColor Cyan
+Write-Host "   Olivelas QR Code Studio - TypeScript 2.0        " -ForegroundColor Cyan
 Write-Host "===================================================" -ForegroundColor Cyan
 Write-Host ""
 
-$port = 8000
+$hasNpm = Get-Command npm -ErrorAction SilentlyContinue
 $hasPython = Get-Command python -ErrorAction SilentlyContinue
-$hasNode = Get-Command npx -ErrorAction SilentlyContinue
 
-if ($hasPython) {
-    Write-Host "[OK] Python detectado. Iniciando servidor em http://localhost:$port..." -ForegroundColor Green
-    Start-Process "http://localhost:$port"
-    python -m http.server $port
-} elseif ($hasNode) {
-    Write-Host "[OK] Node/npx detectado. Iniciando servidor em http://localhost:3000..." -ForegroundColor Green
+if ($hasNpm) {
+    Write-Host "[OK] Node/npm detectado. Iniciando servidor Vite..." -ForegroundColor Green
     Start-Process "http://localhost:3000"
-    npx serve -l 3000 .
+    npm run dev
+} elseif ($hasPython) {
+    Write-Host "[OK] Python detectado. Iniciando servidor local na pasta dist..." -ForegroundColor Green
+    Start-Process "http://localhost:8000"
+    Set-Location "dist"
+    python -m http.server 8000
 } else {
-    Write-Host "[INFO] Abrindo index.html diretamente no navegador padrao..." -ForegroundColor Yellow
-    Start-Process "index.html"
+    Write-Host "[INFO] Abrindo dist/index.html diretamente no navegador..." -ForegroundColor Yellow
+    Start-Process "dist\index.html"
 }
