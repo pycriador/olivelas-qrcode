@@ -1,5 +1,6 @@
 import './style.css';
-import { QRState } from './types';
+import { QRState, DotType } from './types';
+import { PRESETS_DATA } from './services/presets';
 import { QREngine } from './services/qrEngine';
 import { renderHeader } from './components/Header';
 import { renderContentPanel } from './components/ContentPanel';
@@ -60,7 +61,7 @@ class OlivelasApp {
     this.appRoot = root;
 
     this.initTheme();
-    this.render();
+    this.initRouter();
   }
 
   private initTheme(): void {
@@ -75,12 +76,84 @@ class OlivelasApp {
     localStorage.setItem('olivelas_theme', current);
   };
 
-  private switchView = (view: 'app' | 'docs'): void => {
-    this.state.activeView = view;
-    this.render();
-    if (view === 'app') {
-      this.initQRCanvas();
+  /**
+   * Sistema de Roteamento SPA baseado em Hash (100% compatível com GitHub Pages)
+   */
+  private initRouter(): void {
+    this.handleRoute();
+
+    window.addEventListener('hashchange', () => this.handleRoute());
+    window.addEventListener('popstate', () => this.handleRoute());
+  }
+
+  private handleRoute(): void {
+    const rawHash = window.location.hash || '#/';
+    const [pathPart, queryPart] = rawHash.split('?');
+    const cleanPath = pathPart.replace(/^#\/?/, '').toLowerCase();
+
+    // Determina a view ativa
+    const targetView: 'app' | 'docs' = cleanPath.startsWith('docs') ? 'docs' : 'app';
+    this.state.activeView = targetView;
+
+    // Processa parâmetros de consulta (ex: #/?data=...&preset=...)
+    const searchString = queryPart || window.location.search.replace(/^\?/, '');
+    if (searchString) {
+      const params = new URLSearchParams(searchString);
+      const dataParam = params.get('data') || params.get('url');
+      const presetParam = params.get('preset');
+      const dotsParam = params.get('dots') as DotType;
+
+      if (dataParam && dataParam !== this.state.data) {
+        this.state.data = dataParam;
+        this.state.rawUrl = dataParam;
+      }
+      if (presetParam) {
+        const found = PRESETS_DATA.find(p => p.id === presetParam);
+        if (found) {
+          Object.assign(this.state, {
+            activePresetId: found.id,
+            dotsType: found.dotsType,
+            cornersSquareType: found.cornersSquareType,
+            cornersDotType: found.cornersDotType,
+            bgColor: found.bgColor,
+            bgTransparent: false,
+            dotsColor: found.dotsColor,
+            dotsColor2: found.dotsGradient?.color2 || '#7c3aed',
+            dotsGradientEnabled: !!found.dotsGradient,
+            dotsGradientRotation: found.dotsGradient?.rotation || 45,
+            cornersSquareColor: found.cornersColor,
+            cornersDotColor: found.cornersColor,
+            cornersSync: true,
+            logoType: found.presetLogo ? 'wikipedia' : this.state.logoType,
+            selectedWikipediaLogoId: found.presetLogo || null
+          });
+        }
+      }
+      if (dotsParam) {
+        this.state.dotsType = dotsParam;
+      }
     }
+
+    // Sincroniza o título da página no navegador
+    document.title = targetView === 'docs' 
+      ? 'Documentação cURL & Python API - Olivelas QR Code Studio' 
+      : 'Olivelas QR Code Studio - Criador Profissional de QR Code';
+
+    this.render();
+
+    if (targetView === 'app') {
+      setTimeout(() => this.initQRCanvas(), 0);
+    }
+  }
+
+  private switchView = (view: 'app' | 'docs'): void => {
+    const targetHash = view === 'docs' ? '#/docs' : '#/';
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    } else {
+      this.handleRoute();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   private updateState = (partial: Partial<QRState>): void => {

@@ -11,7 +11,7 @@ export function renderHeader(
 
   header.innerHTML = `
     <div class="header-container">
-      <div class="brand-wrapper" style="cursor: pointer;">
+      <a href="#/" class="brand-wrapper" title="Ir para o Criador de QR Code">
         <div class="brand-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="8" height="8" x="2" y="2" rx="2"></rect>
@@ -24,18 +24,18 @@ export function renderHeader(
           <span class="brand-title">Olivelas QR Code</span>
           <span class="brand-tag">PRO TS</span>
         </div>
-      </div>
+      </a>
 
-      <!-- Links de Navegação Principal -->
-      <nav class="header-nav">
-        <button id="nav-btn-creator" class="nav-link-btn ${state.activeView === 'app' ? 'active' : ''}">
+      <!-- Links de Navegação Principal com URL Própria -->
+      <nav class="header-nav" aria-label="Navegação Principal">
+        <a href="#/" id="nav-btn-creator" class="nav-link-btn ${state.activeView === 'app' ? 'active' : ''}" title="Acessar o Criador de QR Code (URL: #/)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="8" x="2" y="2" rx="2"/><rect width="8" height="8" x="14" y="2" rx="2"/><rect width="8" height="8" x="2" y="14" rx="2"/><rect width="4" height="4" x="15" y="15" rx="1"/></svg>
-          Criador
-        </button>
-        <button id="nav-btn-docs" class="nav-link-btn ${state.activeView === 'docs' ? 'active' : ''}">
+          <span>Criador</span>
+        </a>
+        <a href="#/docs" id="nav-btn-docs" class="nav-link-btn ${state.activeView === 'docs' ? 'active' : ''}" title="Acessar Documentação cURL & Python (URL: #/docs)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
-          cURL & Python API
-        </button>
+          <span>cURL & Python API</span>
+        </a>
         ${state.activeView === 'app' ? `
         <button id="btn-toggle-preview-nav" class="nav-link-btn btn-highlight" title="${state.isSidebarCollapsed ? 'Fixar e exibir o painel do QR Code' : 'Ocultar o painel do QR Code'}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -65,9 +65,18 @@ export function renderHeader(
   `;
 
   // Eventos
-  header.querySelector('.brand-wrapper')?.addEventListener('click', () => onSwitchView('app'));
-  header.querySelector('#nav-btn-creator')?.addEventListener('click', () => onSwitchView('app'));
-  header.querySelector('#nav-btn-docs')?.addEventListener('click', () => onSwitchView('docs'));
+  header.querySelector('.brand-wrapper')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    onSwitchView('app');
+  });
+  header.querySelector('#nav-btn-creator')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    onSwitchView('app');
+  });
+  header.querySelector('#nav-btn-docs')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    onSwitchView('docs');
+  });
   header.querySelector('#btn-toggle-preview-nav')?.addEventListener('click', onToggleCollapse);
   header.querySelector('#btn-theme-toggle')?.addEventListener('click', onToggleTheme);
 

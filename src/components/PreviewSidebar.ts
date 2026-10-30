@@ -91,6 +91,11 @@ export function renderPreviewSidebar(
           Imprimir
         </button>
 
+        <button type="button" id="btn-share-url" class="btn-secondary-action" style="grid-column: span 2;" title="Copiar URL direta para compartilhar este QR Code configurado">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Copiar Link Deste QR (URL Própria)
+        </button>
+
         <button type="button" id="btn-test-link" class="btn-secondary-action" style="grid-column: span 2;" title="Testar se o link abre no navegador">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           Testar Link no Navegador
@@ -140,6 +145,23 @@ export function renderPreviewSidebar(
 
   container.querySelector('#btn-print')?.addEventListener('click', () => {
     qrEngine.print(state);
+  });
+
+  container.querySelector('#btn-share-url')?.addEventListener('click', async () => {
+    try {
+      const origin = window.location.origin;
+      const pathname = window.location.pathname;
+      const params = new URLSearchParams();
+      if (state.data) params.set('data', state.data);
+      if (state.activePresetId) params.set('preset', state.activePresetId);
+      if (state.dotsType) params.set('dots', state.dotsType);
+
+      const fullShareUrl = `${origin}${pathname}#/?${params.toString()}`;
+      await navigator.clipboard.writeText(fullShareUrl);
+      onShowToast('URL própria do seu QR copiada! Pronto para compartilhar.');
+    } catch {
+      onShowToast('Não foi possível copiar o link automaticamente');
+    }
   });
 
   container.querySelector('#btn-test-link')?.addEventListener('click', () => {

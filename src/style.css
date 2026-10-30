@@ -99,9 +99,9 @@ body {
 }
 
 .header-container {
-  max-width: 1400px;
+  max-width: 1760px;
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -232,9 +232,9 @@ body {
 
 /* Layout Principal e Grid Responsiva */
 .main-container {
-  max-width: 1400px;
-  margin: 1.5rem auto;
-  padding: 0 1.5rem;
+  max-width: 1760px;
+  margin: 1.25rem auto;
+  padding: 0 2rem;
   width: 100%;
   flex: 1;
   min-width: 0;
@@ -242,8 +242,8 @@ body {
 
 .app-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 420px;
-  gap: 1.75rem;
+  grid-template-columns: minmax(0, 1fr) clamp(400px, 28vw, 480px);
+  gap: 2rem;
   align-items: stretch;
   width: 100%;
   min-width: 0;
@@ -647,8 +647,22 @@ body {
 }
 
 /* Seções de Customização */
+.custom-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.custom-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
 .custom-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
   width: 100%;
@@ -1131,12 +1145,144 @@ body {
   font-size: 0.7rem;
 }
 
-/* Visualização da Documentação cURL & Python */
+/* Visualização da Documentação cURL & Python - Grid Ampla */
 .docs-container {
-  max-width: 1000px;
-  margin: 0 auto;
   width: 100%;
+  max-width: 100%;
   min-width: 0;
+}
+
+.docs-grid-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+.docs-sidebar-sticky {
+  position: sticky;
+  top: 5.5rem;
+  max-height: calc(100vh - 6.5rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.docs-content-col {
+  min-width: 0;
+}
+
+.docs-nav-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.docs-url-badge-box {
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.85rem;
+}
+
+.url-protocol-pill {
+  background: rgba(79, 70, 229, 0.12);
+  color: var(--brand-primary);
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.btn-copy-url-pill {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--brand-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy-url-pill:hover {
+  background: var(--brand-primary-hover);
+}
+
+.docs-toc-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.docs-toc-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.docs-toc-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.docs-toc-link:hover {
+  background: var(--bg-surface-tertiary);
+  color: var(--brand-primary);
+}
+
+.toc-badge {
+  width: 22px;
+  height: 22px;
+  background: var(--bg-surface-tertiary);
+  color: var(--text-secondary);
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.docs-downloads-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1rem;
+}
+
+.btn-doc-download.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .docs-grid-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .docs-sidebar-sticky {
+    position: static;
+    max-height: none;
+  }
 }
 
 .docs-header-card {
@@ -1154,6 +1300,11 @@ body {
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 0.75rem;
+  text-decoration: none;
+}
+
+.btn-back-link:hover {
+  text-decoration: underline;
 }
 
 .docs-main-title {
