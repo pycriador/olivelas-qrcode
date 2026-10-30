@@ -73,18 +73,24 @@ Como o projeto é **100% frontend estático**, ele pode ser publicado no GitHub 
 
 ---
 
-## 💻 Como Rodar Localmente
+## 💻 Como Iniciar o Projeto (Scripts para Windows, Linux e Mac)
 
-Basta abrir o arquivo `index.html` em qualquer navegador moderno, ou rodar um servidor local se preferir:
+Foram incluídos scripts de inicialização automática com detecção de ambiente para **Windows**, **Linux** e **Mac**:
 
+### 🪟 No Windows:
+- Dê dois cliques no arquivo **`start.bat`**, ou
+- Pelo PowerShell:
+  ```powershell
+  .\start.ps1
+  ```
+
+### 🐧 No Linux ou 🍎 No macOS:
+Execute no terminal:
 ```bash
-# Opção 1: Usando npx serve
-npx serve .
-
-# Opção 2: Usando Python
-python -m http.server 8000
+./start.sh
 ```
-Acesse em: `http://localhost:8000`
+
+*(O script detecta automaticamente se você tem Python ou Node instalado para rodar um servidor local com live reload na porta 8000/3000 e abre seu navegador automaticamente. Se não tiver nenhum dos dois, ele abre o `index.html` diretamente).*
 
 ---
 
