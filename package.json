@@ -1,0 +1,24 @@
+{
+  "name": "olivelas-qrcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pycriador/olivelas-qrcode.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pycriador/olivelas-qrcode/issues"
+  },
+  "homepage": "https://github.com/pycriador/olivelas-qrcode#readme",
+  "dependencies": {
+    "qr-code-styling": "^1.9.2"
+  }
+}
