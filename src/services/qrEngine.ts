@@ -21,13 +21,16 @@ export class QREngine {
 
   private buildOptions(state: QRState, width: number, height: number): any {
     // 1. Logo
-    let logoUrl: string | undefined = undefined;
+    let logoUrl = '';
     if (state.logoType === 'wikipedia' && state.selectedWikipediaLogoId) {
       const wiki = getWikipediaLogoById(state.selectedWikipediaLogoId);
       if (wiki) logoUrl = wiki.badgeDataUrl;
     } else if (state.logoType === 'custom' && state.customLogoDataUrl) {
       logoUrl = state.customLogoDataUrl;
     }
+
+    // Garante correção de erro robusta quando há logotipo para leitura instantânea por câmeras
+    const errorCorrection = logoUrl && state.errorCorrectionLevel === 'L' ? 'Q' : state.errorCorrectionLevel;
 
     // 2. Dots
     const dotsOptions: any = {
@@ -60,13 +63,13 @@ export class QREngine {
       qrOptions: {
         typeNumber: 0,
         mode: 'Byte',
-        errorCorrectionLevel: state.errorCorrectionLevel
+        errorCorrectionLevel: errorCorrection
       },
-      image: logoUrl,
+      image: logoUrl || undefined,
       imageOptions: {
         hideBackgroundDots: true,
         imageSize: state.logoSize,
-        margin: state.logoMargin,
+        margin: logoUrl ? 4 : 0,
         crossOrigin: 'anonymous'
       },
       dotsOptions,
