@@ -11,28 +11,29 @@ export function renderPreviewSidebar(
   container.className = `preview-column ${state.isSidebarCollapsed ? 'collapsed' : ''}`;
 
   container.innerHTML = `
-    <!-- Dock Flutuante quando minimizado na lateral -->
-    <div class="docked-preview-pill ${state.isSidebarCollapsed ? '' : 'hidden'}" id="btn-expand-dock" title="Expandir pré-visualização">
+    <!-- Dock Flutuante na Lateral quando minimizado/oculto -->
+    <div class="docked-preview-pill ${state.isSidebarCollapsed ? '' : 'hidden'}" id="btn-expand-dock" title="Clique para reabrir a pré-visualização fixa">
       <div class="docked-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="8" x="2" y="2" rx="2"/><rect width="8" height="8" x="14" y="2" rx="2"/><rect width="8" height="8" x="2" y="14" rx="2"/><rect width="4" height="4" x="15" y="15" rx="1"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="8" height="8" x="2" y="2" rx="2"/><rect width="8" height="8" x="14" y="2" rx="2"/><rect width="8" height="8" x="2" y="14" rx="2"/><rect width="4" height="4" x="15" y="15" rx="1"/></svg>
       </div>
-      <span class="docked-text">Ver QR Code</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="docked-text">Abrir QR Code</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
 
-    <!-- Painel Principal de Preview Fixo -->
+    <!-- Painel Principal de Preview FIXO na Lateral -->
     <div class="preview-sticky-card ${state.isSidebarCollapsed ? 'hidden' : ''}">
       
-      <!-- Cabeçalho do Preview com Botão de Minimizar -->
+      <!-- Cabeçalho do Preview com Botão de Ocultar -->
       <div class="preview-card-header">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span class="preview-header-title">Pré-Visualização</span>
+        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+          <span class="preview-header-title">QR Code em Tempo Real</span>
           <span id="badge-contrast-check" class="contrast-badge ok">✓ Legibilidade Ótima</span>
         </div>
 
-        <button type="button" id="btn-collapse-sidebar" class="btn-collapse-toggle" title="Minimizar pré-visualização para a lateral">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          <span style="font-size: 0.75rem;">Minimizar</span>
+        <!-- Botão Ocultar Painel -->
+        <button type="button" id="btn-collapse-sidebar" class="btn-hide-preview-sidebar" title="Ocultar painel para liberar espaço na tela">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          <span>Ocultar</span>
         </button>
       </div>
 
@@ -58,7 +59,7 @@ export function renderPreviewSidebar(
           <span id="preview-data-url-label" class="meta-pill" title="${state.data}">${state.data}</span>
         </div>
         <div class="meta-row">
-          <span>Resolução de Exportação:</span>
+          <span>Resolução:</span>
           <span>${state.exportSize} x ${state.exportSize} px</span>
         </div>
       </div>
@@ -108,7 +109,7 @@ export function renderPreviewSidebar(
     </div>
   `;
 
-  // Handlers de Minimizar / Restaurar
+  // Handlers de Ocultar / Mostrar
   container.querySelector('#btn-collapse-sidebar')?.addEventListener('click', onToggleCollapse);
   container.querySelector('#btn-expand-dock')?.addEventListener('click', onToggleCollapse);
 

@@ -82,7 +82,6 @@ body {
 #app {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -179,6 +178,19 @@ body {
   font-weight: 700;
 }
 
+.nav-link-btn.btn-highlight {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--brand-primary);
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  font-weight: 600;
+}
+
+.nav-link-btn.btn-highlight:hover {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -226,14 +238,13 @@ body {
   width: 100%;
   flex: 1;
   min-width: 0;
-  overflow-x: clip;
 }
 
 .app-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
   gap: 1.75rem;
-  align-items: start;
+  align-items: stretch;
   width: 100%;
   min-width: 0;
   transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -253,10 +264,17 @@ body {
   min-width: 0;
   max-width: 100%;
   position: relative;
+  height: 100%;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (max-width: 1024px) {
+.preview-column.collapsed {
+  width: 0;
+  min-width: 0;
+  overflow: visible;
+}
+
+@media (max-width: 860px) {
   .app-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -843,10 +861,11 @@ body {
   cursor: pointer;
 }
 
-/* Painel de Visualização & Coluna Lateral */
+/* Painel de Visualização & Coluna Lateral FIXA */
 .preview-sticky-card {
   position: sticky;
-  top: 5rem;
+  top: 5.5rem;
+  align-self: start;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -857,6 +876,9 @@ body {
   align-items: center;
   width: 100%;
   max-width: 100%;
+  max-height: calc(100vh - 6.5rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .preview-card-header {
@@ -865,6 +887,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.25rem;
+  gap: 0.5rem;
 }
 
 .preview-header-title {
@@ -875,23 +898,33 @@ body {
   color: var(--text-secondary);
 }
 
-.btn-collapse-toggle {
+.btn-hide-preview-sidebar {
   background: var(--bg-surface-secondary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.75rem;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
   color: var(--text-secondary);
   font-weight: 600;
-  transition: all 0.2s;
+  font-size: 0.78rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.btn-collapse-toggle:hover {
-  background: var(--bg-surface-tertiary);
-  color: var(--text-primary);
+.btn-hide-preview-sidebar:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-hide-preview-sidebar:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
 }
 
 /* Dock Flutuante quando Minimizado */
@@ -906,16 +939,18 @@ body {
   box-shadow: var(--shadow-xl);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
   cursor: pointer;
-  z-index: 45;
+  z-index: 90;
   transition: all 0.2s ease;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  border: 2px solid rgba(255, 255, 255, 0.25);
 }
 
 .docked-preview-pill:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.45);
   background: var(--brand-primary-hover);
 }
 
