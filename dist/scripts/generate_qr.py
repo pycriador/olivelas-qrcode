@@ -84,11 +84,13 @@ def escape_wifi(text: str) -> str:
         text = text.replace(ch, f"\\{ch}")
     return text
 
-def build_wifi_payload(ssid: str, password: str = "", encryption: str = "WPA", hidden: bool = False) -> str:
+def build_wifi_payload(ssid: str, password: str = "", encryption: str = "WPA2", hidden: bool = False) -> str:
     """Gera a string padronizada ZXing para conexão automática de Wi-Fi."""
     esc_ssid = escape_wifi(ssid.strip())
-    payload = f"WIFI:T:{encryption};S:{esc_ssid};"
-    if encryption != "nopass":
+    enc = encryption or "WPA2"
+    enc_tag = "SAE" if enc == "WPA3" else enc
+    payload = f"WIFI:T:{enc_tag};S:{esc_ssid};"
+    if enc != "nopass":
         payload += f"P:{escape_wifi(password.strip())};"
     if hidden:
         payload += "H:true;"
@@ -167,7 +169,7 @@ def main():
     # Parâmetros de Wi-Fi Universal ZXing
     parser.add_argument("--wifi-ssid", help="Nome da rede Wi-Fi (SSID)")
     parser.add_argument("--wifi-pass", default="", help="Senha da rede Wi-Fi")
-    parser.add_argument("--wifi-enc", default="WPA", choices=["WPA", "WEP", "nopass"], help="Criptografia (padrão: WPA)")
+    parser.add_argument("--wifi-enc", default="WPA2", choices=["WPA2", "WPA", "WPA3", "WEP", "nopass"], help="Criptografia (padrão: WPA2)")
     parser.add_argument("--wifi-hidden", action="store_true", help="Definir rede como oculta")
 
     args = parser.parse_args()

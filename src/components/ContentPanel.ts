@@ -183,9 +183,11 @@ export function renderContentPanel(
         </div>
 
         <div class="form-field-group">
-          <label class="form-label">Tipo de Segurança</label>
+          <label class="form-label">Tipo de Segurança *</label>
           <select id="select-wifi-enc" class="input-text no-icon">
-            <option value="WPA">WPA / WPA2 / WPA3 (Padrão)</option>
+            <option value="WPA2" selected>WPA2 / WPA2-PSK (AES) — Recomendado / Mais Comum</option>
+            <option value="WPA">WPA / WPA-PSK (Universal / Roteadores Antigos)</option>
+            <option value="WPA3">WPA3-Personal (SAE)</option>
             <option value="WEP">WEP (Legado)</option>
             <option value="nopass">Rede Aberta (Sem senha)</option>
           </select>
@@ -199,6 +201,7 @@ export function renderContentPanel(
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
+          <span id="wifi-pass-hint" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">Mínimo 8 caracteres para WPA2/WPA/WPA3</span>
         </div>
 
         <div class="form-field-group" style="justify-content: flex-end; padding-bottom: 0.2rem;">
@@ -206,6 +209,13 @@ export function renderContentPanel(
             <input type="checkbox" id="input-wifi-hidden" style="width: 16px; height: 16px; accent-color: var(--brand-primary); cursor: pointer;">
             <span>Rede Oculta (Não transmite SSID)</span>
           </label>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; justify-content: flex-end;">
+          <button type="button" id="btn-apply-wifi-logo" class="btn-secondary-action" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            <span>Inserir Logo Oficial Wi-Fi no centro do QR Code</span>
+          </button>
         </div>
       </div>
 
@@ -411,6 +421,12 @@ export function renderContentPanel(
     }
   });
 
+  // Aplicar logotipo do Wi-Fi ao QR Code com 1 clique
+  container.querySelector('#btn-apply-wifi-logo')?.addEventListener('click', () => {
+    onUpdateState({ logoType: 'wikipedia', selectedWikipediaLogoId: 'wifi' });
+    onShowToast('Logotipo oficial do Wi-Fi aplicado ao centro do QR Code!');
+  });
+
   // Formulários dinâmicos
   const syncOtherInputs = () => {
     const waPhone = (container.querySelector('#input-wa-phone') as HTMLInputElement)?.value.replace(/\D/g, '') || '';
@@ -426,16 +442,30 @@ export function renderContentPanel(
     const pixDesc = (container.querySelector('#input-pix-desc') as HTMLInputElement)?.value.trim() || '';
     const pixDisplay = container.querySelector('#pix-emv-display') as HTMLElement;
 
-    // Wi-Fi Padronizado ZXing / Android / iOS
+    // Wi-Fi Padronizado ZXing / Android / iOS (WPA2 padrão)
     const wifiSsid = (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.value.trim() || '';
     const wifiPass = (container.querySelector('#input-wifi-pass') as HTMLInputElement)?.value || '';
-    const wifiEnc = (container.querySelector('#select-wifi-enc') as HTMLSelectElement)?.value as any || 'WPA';
+    const wifiEnc = (container.querySelector('#select-wifi-enc') as HTMLSelectElement)?.value as any || 'WPA2';
     const wifiHidden = (container.querySelector('#input-wifi-hidden') as HTMLInputElement)?.checked || false;
     const wifiDisplay = container.querySelector('#wifi-code-display') as HTMLElement;
     const wifiPassGroup = container.querySelector('#group-wifi-pass') as HTMLElement;
+    const wifiPassHint = container.querySelector('#wifi-pass-hint') as HTMLElement;
 
     if (wifiPassGroup) {
       wifiPassGroup.style.display = wifiEnc === 'nopass' ? 'none' : 'flex';
+    }
+
+    if (wifiPassHint) {
+      if (wifiEnc === 'nopass') {
+        wifiPassHint.textContent = 'Rede aberta não necessita de senha.';
+        wifiPassHint.style.color = 'var(--text-muted)';
+      } else if (wifiPass.length > 0 && wifiPass.length < 8 && (wifiEnc === 'WPA2' || wifiEnc === 'WPA' || wifiEnc === 'WPA3')) {
+        wifiPassHint.textContent = '⚠️ Atenção: Senhas WPA/WPA2 devem ter no mínimo 8 caracteres para os celulares conectarem.';
+        wifiPassHint.style.color = '#ef4444';
+      } else {
+        wifiPassHint.textContent = 'Mínimo de 8 caracteres para redes WPA2/WPA/WPA3.';
+        wifiPassHint.style.color = 'var(--text-muted)';
+      }
     }
 
     const vName = (container.querySelector('#input-vcard-name') as HTMLInputElement)?.value || '';
@@ -476,7 +506,7 @@ export function renderContentPanel(
         generatedData = wifiCode;
         if (wifiDisplay) wifiDisplay.textContent = wifiCode;
       } else {
-        generatedData = 'WIFI:T:WPA;S:MinhaRede_5G;P:senha123;;';
+        generatedData = 'WIFI:T:WPA2;S:MinhaRede_5G;P:senha123;;';
         if (wifiDisplay) wifiDisplay.textContent = 'Preencha o nome da rede (SSID) acima para gerar o código...';
       }
     } else if (state.contentType === 'vcard') {
