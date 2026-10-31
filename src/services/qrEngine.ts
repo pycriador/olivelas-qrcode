@@ -10,13 +10,13 @@ export class QREngine {
     this.container = container;
     this.container.innerHTML = '';
 
-    this.instance = new QRCodeStyling(this.buildOptions(state, 300, 300));
+    this.instance = new QRCodeStyling(this.buildOptions(state, 240, 240));
     this.instance.append(this.container);
   }
 
   update(state: QRState): void {
     if (!this.instance) return;
-    this.instance.update(this.buildOptions(state, 300, 300));
+    this.instance.update(this.buildOptions(state, 240, 240));
   }
 
   private buildOptions(state: QRState, width: number, height: number): any {
