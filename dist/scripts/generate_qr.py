@@ -2,7 +2,8 @@
 """
 Olivelas QR Code Studio - CLI Generator
 Gera códigos QR Code em alta definição diretamente da linha de comando,
-com suporte a encurtamento automático de URL e personalização de cores.
+com suporte a URLs, encurtamento automático, personalização de cores
+e geração de Pix Oficial (Padrão BACEN / BR Code / EMV QRCPS-MPM).
 
 Funciona nativamente com a biblioteca padrão do Python (urllib),
 e aproveita 'qrcode' e 'PIL' se estiverem instalados.
@@ -10,6 +11,7 @@ e aproveita 'qrcode' e 'PIL' se estiverem instalados.
 
 import sys
 import argparse
+import unicodedata
 import urllib.parse
 import urllib.request
 
@@ -18,6 +20,60 @@ try:
     from PIL import Image
 except ImportError:
     qrcode = None
+
+def crc16_ccitt(data: str) -> str:
+    """Calcula o checksum CRC16-CCITT (Polinômio 0x1021, valor inicial 0xFFFF)."""
+    crc = 0xFFFF
+    for ch in data:
+        crc ^= (ord(ch) << 8)
+        for _ in range(8):
+            if (crc & 0x8000) != 0:
+                crc = ((crc << 1) ^ 0x1021) & 0xFFFF
+            else:
+                crc = (crc << 1) & 0xFFFF
+    return f"{crc:04X}"
+
+def emv_field(field_id: str, value: str) -> str:
+    """Formata campo no padrão TLV (Tag-Length-Value) do EMV."""
+    return f"{field_id}{len(value):02d}{value}"
+
+def sanitize_pix_text(text: str, max_len: int) -> str:
+    """Remove acentos e caracteres não-alfanuméricos para conformidade bancária."""
+    nfd = unicodedata.normalize("NFD", text or "")
+    clean = "".join(c for c in nfd if unicodedata.category(c) != "Mn")
+    clean = "".join(c for c in clean if c.isalnum() or c == " ").strip().upper()
+    return clean[:max_len]
+
+def build_pix_brcode(key: str, name: str = "RECEBEDOR", city: str = "BRASILIA", amount: str = None, txid: str = "***") -> str:
+    """Gera o payload oficial do Pix Copia e Cola / BR Code (EMV QRCPS-MPM)."""
+    clean_key = key.strip()
+    s_name = sanitize_pix_text(name or "RECEBEDOR", 25) or "RECEBEDOR"
+    s_city = sanitize_pix_text(city or "BRASILIA", 15) or "BRASILIA"
+    s_txid = "".join(c for c in (txid or "***") if c.isalnum())[:25] or "***"
+
+    merchant_info = emv_field("00", "br.gov.bcb.pix") + emv_field("01", clean_key)
+    payload = (
+        emv_field("00", "01") +
+        emv_field("26", merchant_info) +
+        emv_field("52", "0000") +
+        emv_field("53", "986")
+    )
+    if amount:
+        try:
+            val = float(str(amount).replace(",", "."))
+            if val > 0:
+                payload += emv_field("54", f"{val:.2f}")
+        except ValueError:
+            pass
+
+    payload += (
+        emv_field("58", "BR") +
+        emv_field("59", s_name) +
+        emv_field("60", s_city) +
+        emv_field("62", emv_field("05", s_txid)) +
+        "6304"
+    )
+    return payload + crc16_ccitt(payload)
 
 def shorten_url(url: str, provider: str = "tinyurl") -> str:
     """Encurta a URL informada usando o provedor solicitado."""
@@ -42,7 +98,7 @@ def shorten_url(url: str, provider: str = "tinyurl") -> str:
         print(f"[!] Erro ao encurtar ({e}). Usando URL original.")
     return url
 
-def generate_qr(url: str, output: str, fill_color: str, back_color: str, size: int):
+def generate_qr(data: str, output: str, fill_color: str, back_color: str, size: int):
     """Gera o QR Code com biblioteca nativa ou fallback via API de alta definição."""
     if qrcode is not None:
         qr = qrcode.QRCode(
@@ -51,7 +107,7 @@ def generate_qr(url: str, output: str, fill_color: str, back_color: str, size: i
             box_size=max(10, size // 40),
             border=2,
         )
-        qr.add_data(url)
+        qr.add_data(data)
         qr.make(fit=True)
         img = qr.make_image(fill_color=fill_color, back_color=back_color)
         img.save(output)
@@ -61,35 +117,58 @@ def generate_qr(url: str, output: str, fill_color: str, back_color: str, size: i
         print("[*] Pacote 'qrcode' não detectado localmente. Baixando via API de alta definição...")
         clean_color = fill_color.replace("#", "")
         clean_bg = back_color.replace("#", "")
-        safe_url = urllib.parse.quote(url)
+        safe_data = urllib.parse.quote(data)
         fmt = "svg" if output.lower().endswith(".svg") else "png"
         
-        endpoint = f"https://quickchart.io/qr?text={safe_url}&size={size}&format={fmt}&dark={clean_color}&light={clean_bg}"
+        endpoint = f"https://quickchart.io/qr?text={safe_data}&size={size}&format={fmt}&dark={clean_color}&light={clean_bg}"
         
         req = urllib.request.Request(endpoint, headers={"User-Agent": "OlivelasQRCode/2.0"})
         with urllib.request.urlopen(req, timeout=10) as resp:
-            data = resp.read()
+            content = resp.read()
             with open(output, "wb") as f:
-                f.write(data)
+                f.write(content)
             print(f"[OK] QR Code em alta definição ({size}x{size}) salvo em: {output}")
 
 def main():
     parser = argparse.ArgumentParser(description="Olivelas QR Code Studio - Gerador de Terminal")
-    parser.add_argument("--url", "-u", required=True, help="URL ou texto a ser codificado")
+    parser.add_argument("--url", "-u", help="URL ou texto genérico a ser codificado")
     parser.add_argument("--output", "-o", default="qrcode.png", help="Nome do arquivo de saída (padrão: qrcode.png)")
     parser.add_argument("--color", "-c", default="#4f46e5", help="Cor principal (hex, padrão: #4f46e5)")
     parser.add_argument("--bg", "-b", default="#ffffff", help="Cor de fundo (hex, padrão: #ffffff)")
     parser.add_argument("--size", "-s", type=int, default=1024, help="Resolução em pixels (padrão: 1024)")
     parser.add_argument("--shorten", choices=["tinyurl", "isgd", "dagd", "ulvis", "clckru"], help="Encurtar URL antes de gerar")
 
+    # Parâmetros de Pix Oficial BACEN
+    parser.add_argument("--pix-key", help="Chave Pix (E-mail, CPF, CNPJ, Celular +55 ou EVP)")
+    parser.add_argument("--pix-name", default="RECEBEDOR", help="Nome do beneficiário do Pix")
+    parser.add_argument("--pix-city", default="BRASILIA", help="Cidade do beneficiário do Pix")
+    parser.add_argument("--pix-amount", help="Valor em R$ (ex: 25.00)")
+    parser.add_argument("--pix-txid", default="***", help="Identificador / TxID da transação (padrão: ***)")
+
     args = parser.parse_args()
 
-    target_url = args.url
-    if args.shorten:
-        target_url = shorten_url(target_url, args.shorten)
-        print(f"[+] URL encurtada: {target_url}")
+    if args.pix_key:
+        target_data = build_pix_brcode(
+            key=args.pix_key,
+            name=args.pix_name,
+            city=args.pix_city,
+            amount=args.pix_amount,
+            txid=args.pix_txid
+        )
+        print(f"[Pix] Código EMV BR Code gerado:")
+        print(f"      {target_data}")
+    elif args.url:
+        target_data = args.url
+        if args.shorten:
+            target_data = shorten_url(target_data, args.shorten)
+            print(f"[+] URL encurtada: {target_data}")
+    else:
+        print("[!] Erro: Você deve informar uma --url ou uma --pix-key.")
+        print("    Exemplo Pix: python scripts/generate_qr.py --pix-key 'meuemail@pix.com' --pix-amount 10.00 -o pix.png")
+        print("    Exemplo URL: python scripts/generate_qr.py --url 'https://meusite.com' -o site.png")
+        sys.exit(1)
 
-    generate_qr(target_url, args.output, args.color, args.bg, args.size)
+    generate_qr(target_data, args.output, args.color, args.bg, args.size)
 
 if __name__ == "__main__":
     main()

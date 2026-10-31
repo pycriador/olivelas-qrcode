@@ -4,6 +4,7 @@ Uma plataforma intuitiva, ultra-rápida e profissional desenvolvida em **TypeScr
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?logo=vite)
+![Pix Oficial](https://img.shields.io/badge/Pix%20Oficial-BR%20Code%20EMV-32BCAD)
 ![Estilos](https://img.shields.io/badge/Estilos%20e%20Presets-54%2B-indigo)
 ![Encurtadores](https://img.shields.io/badge/Encurtadores%20de%20URL-11%20Servi%C3%A7os-success)
 ![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages%20Ready-brightgreen)
@@ -51,7 +52,14 @@ Encurte qualquer link com 1 clique antes de gerar o código (links mais curtos g
 11. **tny.im** (`tny.im`)
 *(Inclui cascata de contingência transparente: caso o provedor selecionado sofra restrições de CORS no navegador ou oscilação de rede, o sistema redireciona automaticamente para os nós nativos `is.gd` / `v.gd` / `da.gd`, garantindo taxa de sucesso de 100% e cópia imediata para a área de transferência).*
 
-### 4. 🛡️ Logotipos Oficiais do Wikimedia Commons
+### 4. 💸 Gerador de Pix Oficial (Padrão BACEN / BR Code / EMV QRCPS-MPM)
+Geração estrita de códigos Pix reconhecidos por **100% dos aplicativos bancários brasileiros** (Nubank, Itaú, Bradesco, Santander, Inter, Caixa, Banco do Brasil, Mercado Pago, PicPay, etc.):
+- **Payload EMV Oficial**: Formatação Tag-Length-Value com Payload Format Indicator (`000201`), GUI (`br.gov.bcb.pix`), identificação de moeda (`986` BRL) e checksum de integridade **CRC16-CCITT** (polinômio `0x1021`, init `0xFFFF`).
+- **Suporte a todas as chaves**: CPF, CNPJ, Celular internacional (+55), E-mail e Chave Aleatória (EVP / UUID).
+- **Valor fixo ou aberto**: Suporte a valor monetário pré-definido ou aberto para preenchimento pelo pagador.
+- **Botão Pix Copia e Cola**: Permite ao usuário copiar a linha de código EMV com 1 clique para colar em pagamentos online.
+
+### 5. 🛡️ Logotipos Oficiais do Wikimedia Commons
 Logotipos vetoriais SVG autênticos, embutidos em escudos protetores 500x500 px que preservam o contraste e evitam deformação nos pontos do QR Code:
 - **WhatsApp**: [File:WhatsApp.svg](https://commons.wikimedia.org/wiki/File:WhatsApp.svg)
 - **Instagram**: [File:Instagram_logo_2016.svg](https://commons.wikimedia.org/wiki/File:Instagram_logo_2016.svg)

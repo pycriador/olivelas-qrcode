@@ -1,5 +1,6 @@
 import { QRState, ContentType } from '../types';
 import { URL_SHORTENERS, shortenUrlWithFallback } from '../services/shorteners';
+import { generatePixBRCode, PixOptions } from '../services/pixEngine';
 
 export function renderContentPanel(
   state: QRState,
@@ -98,24 +99,71 @@ export function renderContentPanel(
       </div>
     </div>
 
-    <!-- Painel Pix -->
+    <!-- Painel Pix (Padrão Oficial BACEN / BR Code / EMV QRCPS-MPM) -->
     <div id="content-panel-pix" class="content-form-section ${state.contentType === 'pix' ? '' : 'hidden'}">
+      <div class="pix-notice-banner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Gera código compatível com <strong>todos os aplicativos bancários</strong> (Nubank, Itaú, Bradesco, Santander, Inter, Caixa, BB, etc.)</span>
+      </div>
+
       <div class="form-grid-2">
+        <div class="form-field-group">
+          <label class="form-label">Tipo de Chave</label>
+          <select id="select-pix-keytype" class="input-text no-icon">
+            <option value="auto">Detectar Automaticamente</option>
+            <option value="phone">Celular (com DDD)</option>
+            <option value="cpf">CPF (11 dígitos)</option>
+            <option value="cnpj">CNPJ (14 dígitos)</option>
+            <option value="email">E-mail</option>
+            <option value="evp">Chave Aleatória (EVP)</option>
+          </select>
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-label">Chave Pix *</label>
+          <input type="text" id="input-pix-key" class="input-text no-icon" placeholder="Ex: 11999998888, maria@email.com, 123.456.789-00">
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-label">Nome do Beneficiário *</label>
+          <input type="text" id="input-pix-name" class="input-text no-icon" placeholder="Ex: Maria Silva (máx 25 letras)">
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-label">Cidade *</label>
+          <input type="text" id="input-pix-city" class="input-text no-icon" placeholder="Ex: SAO PAULO (máx 15 letras)">
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-label">Valor R$ (Opcional - deixe vazio p/ valor livre)</label>
+          <input type="number" step="0.01" min="0" id="input-pix-amount" class="input-text no-icon" placeholder="Ex: 50.00">
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-label">Identificador / TxID (Opcional)</label>
+          <input type="text" id="input-pix-txid" class="input-text no-icon" placeholder="Padrão: *** ou seu código de pedido">
+        </div>
+
         <div class="form-field-group" style="grid-column: span 2;">
-          <label class="form-label">Chave Pix (E-mail, CPF/CNPJ, Telefone ou Aleatória)</label>
-          <input type="text" id="input-pix-key" class="input-text no-icon" placeholder="suachave@pix.com.br">
+          <label class="form-label">Descrição / Mensagem (Opcional)</label>
+          <input type="text" id="input-pix-desc" class="input-text no-icon" placeholder="Ex: Pagamento Pedido 104">
         </div>
-        <div class="form-field-group">
-          <label class="form-label">Nome do Beneficiário</label>
-          <input type="text" id="input-pix-name" class="input-text no-icon" placeholder="Ex: Maria Silva">
+      </div>
+
+      <!-- Caixa de Visualização e Cópia do Pix Copia e Cola -->
+      <div class="pix-copia-cola-box">
+        <div class="pix-copia-cola-header">
+          <div class="pix-badge-emv">
+            <span class="pulse-mini"></span>
+            <span>BR Code Oficial (EMV)</span>
+          </div>
+          <button type="button" id="btn-copy-pix-code" class="btn-copy-pix">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copiar Pix Copia e Cola</span>
+          </button>
         </div>
-        <div class="form-field-group">
-          <label class="form-label">Cidade</label>
-          <input type="text" id="input-pix-city" class="input-text no-icon" placeholder="Ex: SAO PAULO">
-        </div>
-        <div class="form-field-group">
-          <label class="form-label">Valor R$ (Opcional)</label>
-          <input type="number" step="0.01" id="input-pix-amount" class="input-text no-icon" placeholder="Ex: 50.00">
+        <div class="pix-code-preview-wrap">
+          <code id="pix-emv-display" class="pix-code-preview">Preencha sua chave acima para gerar o código...</code>
         </div>
       </div>
     </div>
@@ -186,6 +234,7 @@ export function renderContentPanel(
       container.querySelector(`#content-panel-${type}`)?.classList.remove('hidden');
 
       onUpdateState({ contentType: type });
+      syncOtherInputs();
     });
   });
 
@@ -265,15 +314,47 @@ export function renderContentPanel(
     }
   });
 
+  // Botão de Copiar Pix Copia e Cola
+  container.querySelector('#btn-copy-pix-code')?.addEventListener('click', async () => {
+    const pixKey = (container.querySelector('#input-pix-key') as HTMLInputElement)?.value.trim();
+    if (!pixKey) {
+      onShowToast('Digite uma chave Pix primeiro para gerar o código');
+      (container.querySelector('#input-pix-key') as HTMLInputElement)?.focus();
+      return;
+    }
+    const brCode = generatePixBRCode({
+      key: pixKey,
+      keyType: (container.querySelector('#select-pix-keytype') as HTMLSelectElement)?.value as any || 'auto',
+      name: (container.querySelector('#input-pix-name') as HTMLInputElement)?.value.trim(),
+      city: (container.querySelector('#input-pix-city') as HTMLInputElement)?.value.trim(),
+      amount: (container.querySelector('#input-pix-amount') as HTMLInputElement)?.value.trim(),
+      txid: (container.querySelector('#input-pix-txid') as HTMLInputElement)?.value.trim(),
+      description: (container.querySelector('#input-pix-desc') as HTMLInputElement)?.value.trim()
+    });
+    if (brCode) {
+      try {
+        await navigator.clipboard.writeText(brCode);
+        onShowToast('Código Pix Copia e Cola copiado com sucesso! Válido em qualquer banco.');
+      } catch {
+        onShowToast('Código Pix gerado!');
+      }
+    }
+  });
+
   // Formulários dinâmicos
   const syncOtherInputs = () => {
     const waPhone = (container.querySelector('#input-wa-phone') as HTMLInputElement)?.value.replace(/\D/g, '') || '';
     const waMsg = encodeURIComponent((container.querySelector('#input-wa-msg') as HTMLInputElement)?.value || '');
     
+    // Pix Oficial BACEN
     const pixKey = (container.querySelector('#input-pix-key') as HTMLInputElement)?.value.trim() || '';
-    const pixName = (container.querySelector('#input-pix-name') as HTMLInputElement)?.value.trim() || 'RECEBEDOR';
-    const pixCity = (container.querySelector('#input-pix-city') as HTMLInputElement)?.value.trim() || 'BRASILIA';
+    const pixKeyType = (container.querySelector('#select-pix-keytype') as HTMLSelectElement)?.value as any || 'auto';
+    const pixName = (container.querySelector('#input-pix-name') as HTMLInputElement)?.value.trim() || '';
+    const pixCity = (container.querySelector('#input-pix-city') as HTMLInputElement)?.value.trim() || '';
     const pixAmt = (container.querySelector('#input-pix-amount') as HTMLInputElement)?.value.trim() || '';
+    const pixTxid = (container.querySelector('#input-pix-txid') as HTMLInputElement)?.value.trim() || '';
+    const pixDesc = (container.querySelector('#input-pix-desc') as HTMLInputElement)?.value.trim() || '';
+    const pixDisplay = container.querySelector('#pix-emv-display') as HTMLElement;
 
     const wifiSsid = (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.value || '';
     const wifiPass = (container.querySelector('#input-wifi-pass') as HTMLInputElement)?.value || '';
@@ -290,7 +371,23 @@ export function renderContentPanel(
     if (state.contentType === 'whatsapp') {
       generatedData = `https://wa.me/${waPhone}${waMsg ? '?text=' + waMsg : ''}`;
     } else if (state.contentType === 'pix') {
-      generatedData = pixKey ? `PIX: chave=${pixKey}; valor=${pixAmt}; nome=${pixName}; cidade=${pixCity};` : 'PIX';
+      if (pixKey) {
+        const brCode = generatePixBRCode({
+          key: pixKey,
+          keyType: pixKeyType,
+          name: pixName,
+          city: pixCity,
+          amount: pixAmt,
+          txid: pixTxid,
+          description: pixDesc
+        });
+        generatedData = brCode;
+        if (pixDisplay) pixDisplay.textContent = brCode;
+      } else {
+        // Fallback de demonstração com chave modelo válida
+        generatedData = '00020126330014br.gov.bcb.pix0111000000000005204000053039865802BR5910RECEBEDOR6008BRASILIA62070503***63045E1B';
+        if (pixDisplay) pixDisplay.textContent = 'Preencha sua chave acima para gerar o código...';
+      }
     } else if (state.contentType === 'wifi') {
       generatedData = `WIFI:S:${wifiSsid};T:${wifiEnc};P:${wifiPass};;`;
     } else if (state.contentType === 'vcard') {
@@ -302,9 +399,20 @@ export function renderContentPanel(
     onUpdateState({ data: generatedData });
   };
 
-  ['input-wa-phone', 'input-wa-msg', 'input-pix-key', 'input-pix-name', 'input-pix-city', 'input-pix-amount',
-   'input-wifi-ssid', 'input-wifi-pass', 'select-wifi-enc', 'input-vcard-name', 'input-vcard-tel', 'input-vcard-email', 'input-vcard-org', 'input-text-free'].forEach(id => {
-    container.querySelector(`#${id}`)?.addEventListener('input', syncOtherInputs);
+  const dynamicInputs = [
+    'input-wa-phone', 'input-wa-msg',
+    'select-pix-keytype', 'input-pix-key', 'input-pix-name', 'input-pix-city', 'input-pix-amount', 'input-pix-txid', 'input-pix-desc',
+    'input-wifi-ssid', 'input-wifi-pass', 'select-wifi-enc',
+    'input-vcard-name', 'input-vcard-tel', 'input-vcard-email', 'input-vcard-org',
+    'input-text-free'
+  ];
+
+  dynamicInputs.forEach(id => {
+    const el = container.querySelector(`#${id}`);
+    if (el) {
+      el.addEventListener('input', syncOtherInputs);
+      el.addEventListener('change', syncOtherInputs);
+    }
   });
 
   return container;

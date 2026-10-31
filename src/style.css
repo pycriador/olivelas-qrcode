@@ -585,6 +585,106 @@ body {
   margin-bottom: 0.35rem;
 }
 
+/* Banner e Box de Pix Oficial (BR Code / EMV) */
+.pix-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.95rem;
+  margin-bottom: 1.15rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.pix-notice-banner svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .pix-notice-banner {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #e2e8f0;
+}
+
+.pix-copia-cola-box {
+  margin-top: 1rem;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  width: 100%;
+}
+
+.pix-copia-cola-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.pix-badge-emv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.pulse-mini {
+  width: 7px;
+  height: 7px;
+  background: #10b981;
+  border-radius: 9999px;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseGreen 2s infinite;
+}
+
+.btn-copy-pix {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.85rem;
+  background: var(--brand-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy-pix:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.pix-code-preview-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  overflow: hidden;
+}
+
+.pix-code-preview {
+  display: block;
+  font-family: 'Fira Code', Consolas, Monaco, monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+  line-height: 1.4;
+  user-select: all;
+}
+
 /* Sub-abas de Customização */
 .nav-tab-pills {
   display: flex;

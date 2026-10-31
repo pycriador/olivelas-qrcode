@@ -120,9 +120,25 @@ curl -s "https://quickchart.io/qr?text=${SHORT_URL}&size=1024&format=png&dark=4f
               <button class="btn-copy-code" data-target="code-curl-4">Copiar PowerShell</button>
             </div>
             <pre><code id="code-curl-4"># Encurta e baixa o QR Code no PowerShell (Windows)
-$short = (curl.exe -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode")
+$short = (curl.exe -s "https://is.gd/create.php?format=simple&url=https://github.com/pycriador/olivelas-qrcode")
 Write-Host "URL Encurtada: $short"
 curl.exe -s "https://quickchart.io/qr?text=$short&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
+          </div>
+
+          <!-- Exemplo 1.5: Pix Oficial BACEN -->
+          <div class="code-example-block">
+            <div class="code-header">
+              <span class="code-title">Exemplo 5: Download de QR Code Pix Oficial (Padrão BACEN / BR Code)</span>
+              <button class="btn-copy-code" data-target="code-curl-5">Copiar Comando Pix</button>
+            </div>
+            <pre><code id="code-curl-5"># Baixar QR Code Pix estático (EMV oficial reconhecido por qualquer app de banco)
+curl -s -G "https://quickchart.io/qr" \
+  --data-urlencode "text=00020126330014br.gov.bcb.pix011112345678900520400005303986540510.005802BR5913WILLIAN JESUS6008BRASILIA62070503***63043133" \
+  --data-urlencode "size=1024" \
+  --data-urlencode "format=png" \
+  --data-urlencode "dark=059669" \
+  --data-urlencode "light=ffffff" \
+  -o qrcode_pix.png</code></pre>
           </div>
         </section>
 
@@ -149,11 +165,14 @@ curl.exe -s "https://quickchart.io/qr?text=$short&size=1024&format=png&dark=4f46
             <pre><code id="code-py-cli"># 1. Gerar QR Code padrão
 python scripts/generate_qr.py --url "https://github.com/pycriador/olivelas-qrcode"
 
-# 2. Gerar com cor customizada (#4f46e5) e resolução 1024px
+# 2. Gerar QR Code Pix Oficial (Padrão BACEN / BR Code)
+python scripts/generate_qr.py --pix-key "12345678900" --pix-name "Willian Jesus" --pix-amount 25.00 -o pix_25.png
+
+# 3. Gerar com cor customizada (#4f46e5) e resolução 1024px
 python scripts/generate_qr.py --url "https://meusite.com" --color "#4f46e5" --size 1024 --output meu_qrcode.png
 
-# 3. Encurtar automaticamente a URL antes de gerar o código
-python scripts/generate_qr.py --url "https://meusite.com/artigo-longo-com-parametros" --shorten tinyurl --output qr_curto.png</code></pre>
+# 4. Encurtar automaticamente a URL antes de gerar o código
+python scripts/generate_qr.py --url "https://meusite.com/artigo-longo" --shorten isgd --output qr_curto.png</code></pre>
           </div>
 
           <div class="code-example-block">
