@@ -885,10 +885,10 @@ var e=Object.create,t=Object.defineProperty,n=Object.getOwnPropertyDescriptor,r=
               <span class="code-title">Exemplo 3: Pipeline: Encurtar URL e Baixar QR Code Automático (Linux/macOS)</span>
               <button class="btn-copy-code" data-target="code-curl-3">Copiar Bash</button>
             </div>
-            <pre><code id="code-curl-3"># Encurta a URL via TinyURL e gera o QR Code 1024px diretamente do link encurtado
-SHORT_URL=$(curl -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode")
+            <pre><code id="code-curl-3"># Encurta a URL via is.gd/TinyURL e gera o QR Code 1024px diretamente do link encurtado
+SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=https://github.com/pycriador/olivelas-qrcode")
 echo "URL Encurtada: $SHORT_URL"
-curl -s "https://quickchart.io/qr?text=${SHORT_URL}&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
+curl -s "https://quickchart.io/qr?text=$SHORT_URL&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
           </div>
 
           <!-- Exemplo 1.4 -->
@@ -910,13 +910,7 @@ curl.exe -s "https://quickchart.io/qr?text=$short&size=1024&format=png&dark=4f46
               <button class="btn-copy-code" data-target="code-curl-5">Copiar Comando Pix</button>
             </div>
             <pre><code id="code-curl-5"># Baixar QR Code Pix estático (EMV oficial reconhecido por qualquer app de banco)
-curl -s -G "https://quickchart.io/qr" \
-  --data-urlencode "text=00020126330014br.gov.bcb.pix011112345678900520400005303986540510.005802BR5913WILLIAN JESUS6008BRASILIA62070503***63043133" \
-  --data-urlencode "size=1024" \
-  --data-urlencode "format=png" \
-  --data-urlencode "dark=059669" \
-  --data-urlencode "light=ffffff" \
-  -o qrcode_pix.png</code></pre>
+curl -s -G "https://quickchart.io/qr"   --data-urlencode "text=00020126330014br.gov.bcb.pix011112345678900520400005303986540510.005802BR5913WILLIAN JESUS6008BRASILIA62070503***63043133"   --data-urlencode "size=1024"   --data-urlencode "format=png"   --data-urlencode "dark=059669"   --data-urlencode "light=ffffff"   -o qrcode_pix.png</code></pre>
           </div>
 
           <!-- Exemplo 1.6: Wi-Fi Conexão Automática -->
@@ -926,13 +920,7 @@ curl -s -G "https://quickchart.io/qr" \
               <button class="btn-copy-code" data-target="code-curl-6">Copiar Comando Wi-Fi</button>
             </div>
             <pre><code id="code-curl-6"># Baixar QR Code de Wi-Fi para conexão automática (apontou a câmera, conectou)
-curl -s -G "https://quickchart.io/qr" \
-  --data-urlencode "text=WIFI:T:WPA;S:MinhaCasa_5G;P:minhasenha123;;" \
-  --data-urlencode "size=1024" \
-  --data-urlencode "format=png" \
-  --data-urlencode "dark=0284c7" \
-  --data-urlencode "light=ffffff" \
-  -o qrcode_wifi.png</code></pre>
+curl -s -G "https://quickchart.io/qr"   --data-urlencode "text=WIFI:T:WPA;S:MinhaCasa_5G;P:minhasenha123;;"   --data-urlencode "size=1024"   --data-urlencode "format=png"   --data-urlencode "dark=0284c7"   --data-urlencode "light=ffffff"   -o qrcode_wifi.png</code></pre>
           </div>
         </section>
 

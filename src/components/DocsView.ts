@@ -107,10 +107,10 @@ export function renderDocsView(onBackToApp: () => void, onShowToast: (msg: strin
               <span class="code-title">Exemplo 3: Pipeline: Encurtar URL e Baixar QR Code Automático (Linux/macOS)</span>
               <button class="btn-copy-code" data-target="code-curl-3">Copiar Bash</button>
             </div>
-            <pre><code id="code-curl-3"># Encurta a URL via TinyURL e gera o QR Code 1024px diretamente do link encurtado
-SHORT_URL=$(curl -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode")
+            <pre><code id="code-curl-3"># Encurta a URL via is.gd/TinyURL e gera o QR Code 1024px diretamente do link encurtado
+SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=https://github.com/pycriador/olivelas-qrcode")
 echo "URL Encurtada: $SHORT_URL"
-curl -s "https://quickchart.io/qr?text=${SHORT_URL}&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
+curl -s "https://quickchart.io/qr?text=$SHORT_URL&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
           </div>
 
           <!-- Exemplo 1.4 -->
