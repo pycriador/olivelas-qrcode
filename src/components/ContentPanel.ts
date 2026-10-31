@@ -1,6 +1,7 @@
 import { QRState, ContentType } from '../types';
 import { URL_SHORTENERS, shortenUrlWithFallback } from '../services/shorteners';
 import { generatePixBRCode, PixOptions } from '../services/pixEngine';
+import { generateWifiString, WifiOptions } from '../services/wifiEngine';
 
 export function renderContentPanel(
   state: QRState,
@@ -168,24 +169,60 @@ export function renderContentPanel(
       </div>
     </div>
 
-    <!-- Painel Wi-Fi -->
+    <!-- Painel Wi-Fi (Padrão Universal ZXing / iOS / Android) -->
     <div id="content-panel-wifi" class="content-form-section ${state.contentType === 'wifi' ? '' : 'hidden'}">
+      <div class="pix-notice-banner" style="background: rgba(14, 165, 233, 0.08); border-color: rgba(14, 165, 233, 0.25);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        <span>Aponte a câmera do celular (iPhone ou Android) para <strong>conectar automaticamente ao Wi-Fi</strong> sem precisar digitar a senha.</span>
+      </div>
+
       <div class="form-grid-2">
         <div class="form-field-group">
-          <label class="form-label">Nome da Rede (SSID)</label>
+          <label class="form-label">Nome da Rede (SSID) *</label>
           <input type="text" id="input-wifi-ssid" class="input-text no-icon" placeholder="Ex: MinhaCasa_5G">
         </div>
+
         <div class="form-field-group">
-          <label class="form-label">Senha do Wi-Fi</label>
-          <input type="text" id="input-wifi-pass" class="input-text no-icon" placeholder="Senha da rede">
-        </div>
-        <div class="form-field-group">
-          <label class="form-label">Segurança</label>
+          <label class="form-label">Tipo de Segurança</label>
           <select id="select-wifi-enc" class="input-text no-icon">
-            <option value="WPA">WPA / WPA2 / WPA3</option>
-            <option value="WEP">WEP</option>
+            <option value="WPA">WPA / WPA2 / WPA3 (Padrão)</option>
+            <option value="WEP">WEP (Legado)</option>
             <option value="nopass">Rede Aberta (Sem senha)</option>
           </select>
+        </div>
+
+        <div class="form-field-group" id="group-wifi-pass">
+          <label class="form-label">Senha do Wi-Fi</label>
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <input type="password" id="input-wifi-pass" class="input-text no-icon" placeholder="Senha da rede (mín. 8 caracteres)" style="padding-right: 2.5rem; width: 100%;">
+            <button type="button" id="btn-toggle-wifi-pass" style="position: absolute; right: 0.6rem; background: none; border: none; cursor: pointer; color: var(--text-muted); display: grid; place-items: center; padding: 0.2rem;" title="Mostrar/ocultar senha">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-field-group" style="justify-content: flex-end; padding-bottom: 0.2rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; user-select: none; color: var(--text-secondary);">
+            <input type="checkbox" id="input-wifi-hidden" style="width: 16px; height: 16px; accent-color: var(--brand-primary); cursor: pointer;">
+            <span>Rede Oculta (Não transmite SSID)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Caixa de Visualização do Código de Conexão -->
+      <div class="pix-copia-cola-box" style="margin-top: 1rem;">
+        <div class="pix-copia-cola-header">
+          <div class="pix-badge-emv" style="color: #0284c7;">
+            <span class="pulse-mini" style="background: #0284c7; box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);"></span>
+            <span>Padrão Universal ZXing (WIFI:)</span>
+          </div>
+          <button type="button" id="btn-copy-wifi-code" class="btn-copy-pix" style="background: #0284c7;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copiar Código Wi-Fi</span>
+          </button>
+        </div>
+        <div class="pix-code-preview-wrap">
+          <code id="wifi-code-display" class="pix-code-preview">Preencha o nome da rede (SSID) acima para gerar o código...</code>
         </div>
       </div>
     </div>
@@ -341,6 +378,39 @@ export function renderContentPanel(
     }
   });
 
+  // Botão de Copiar Configuração Wi-Fi
+  container.querySelector('#btn-copy-wifi-code')?.addEventListener('click', async () => {
+    const wifiSsid = (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.value.trim();
+    if (!wifiSsid) {
+      onShowToast('Digite o nome da rede Wi-Fi primeiro');
+      (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.focus();
+      return;
+    }
+    const wifiCode = generateWifiString({
+      ssid: wifiSsid,
+      password: (container.querySelector('#input-wifi-pass') as HTMLInputElement)?.value || '',
+      encryption: (container.querySelector('#select-wifi-enc') as HTMLSelectElement)?.value as any || 'WPA',
+      hidden: (container.querySelector('#input-wifi-hidden') as HTMLInputElement)?.checked || false
+    });
+    if (wifiCode) {
+      try {
+        await navigator.clipboard.writeText(wifiCode);
+        onShowToast('Código de conexão Wi-Fi copiado com sucesso!');
+      } catch {
+        onShowToast('Código Wi-Fi gerado!');
+      }
+    }
+  });
+
+  // Alternar visualização da senha do Wi-Fi
+  const btnToggleWifi = container.querySelector('#btn-toggle-wifi-pass');
+  const inputWifiPass = container.querySelector('#input-wifi-pass') as HTMLInputElement;
+  btnToggleWifi?.addEventListener('click', () => {
+    if (inputWifiPass) {
+      inputWifiPass.type = inputWifiPass.type === 'password' ? 'text' : 'password';
+    }
+  });
+
   // Formulários dinâmicos
   const syncOtherInputs = () => {
     const waPhone = (container.querySelector('#input-wa-phone') as HTMLInputElement)?.value.replace(/\D/g, '') || '';
@@ -356,9 +426,17 @@ export function renderContentPanel(
     const pixDesc = (container.querySelector('#input-pix-desc') as HTMLInputElement)?.value.trim() || '';
     const pixDisplay = container.querySelector('#pix-emv-display') as HTMLElement;
 
-    const wifiSsid = (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.value || '';
+    // Wi-Fi Padronizado ZXing / Android / iOS
+    const wifiSsid = (container.querySelector('#input-wifi-ssid') as HTMLInputElement)?.value.trim() || '';
     const wifiPass = (container.querySelector('#input-wifi-pass') as HTMLInputElement)?.value || '';
-    const wifiEnc = (container.querySelector('#select-wifi-enc') as HTMLSelectElement)?.value || 'WPA';
+    const wifiEnc = (container.querySelector('#select-wifi-enc') as HTMLSelectElement)?.value as any || 'WPA';
+    const wifiHidden = (container.querySelector('#input-wifi-hidden') as HTMLInputElement)?.checked || false;
+    const wifiDisplay = container.querySelector('#wifi-code-display') as HTMLElement;
+    const wifiPassGroup = container.querySelector('#group-wifi-pass') as HTMLElement;
+
+    if (wifiPassGroup) {
+      wifiPassGroup.style.display = wifiEnc === 'nopass' ? 'none' : 'flex';
+    }
 
     const vName = (container.querySelector('#input-vcard-name') as HTMLInputElement)?.value || '';
     const vTel = (container.querySelector('#input-vcard-tel') as HTMLInputElement)?.value || '';
@@ -384,12 +462,23 @@ export function renderContentPanel(
         generatedData = brCode;
         if (pixDisplay) pixDisplay.textContent = brCode;
       } else {
-        // Fallback de demonstração com chave modelo válida
         generatedData = '00020126330014br.gov.bcb.pix0111000000000005204000053039865802BR5910RECEBEDOR6008BRASILIA62070503***63045E1B';
         if (pixDisplay) pixDisplay.textContent = 'Preencha sua chave acima para gerar o código...';
       }
     } else if (state.contentType === 'wifi') {
-      generatedData = `WIFI:S:${wifiSsid};T:${wifiEnc};P:${wifiPass};;`;
+      if (wifiSsid) {
+        const wifiCode = generateWifiString({
+          ssid: wifiSsid,
+          password: wifiPass,
+          encryption: wifiEnc,
+          hidden: wifiHidden
+        });
+        generatedData = wifiCode;
+        if (wifiDisplay) wifiDisplay.textContent = wifiCode;
+      } else {
+        generatedData = 'WIFI:T:WPA;S:MinhaRede_5G;P:senha123;;';
+        if (wifiDisplay) wifiDisplay.textContent = 'Preencha o nome da rede (SSID) acima para gerar o código...';
+      }
     } else if (state.contentType === 'vcard') {
       generatedData = `BEGIN:VCARD\nVERSION:3.0\nN:${vName}\nFN:${vName}\nORG:${vOrg}\nTEL:${vTel}\nEMAIL:${vEmail}\nEND:VCARD`;
     } else if (state.contentType === 'text') {
@@ -402,7 +491,7 @@ export function renderContentPanel(
   const dynamicInputs = [
     'input-wa-phone', 'input-wa-msg',
     'select-pix-keytype', 'input-pix-key', 'input-pix-name', 'input-pix-city', 'input-pix-amount', 'input-pix-txid', 'input-pix-desc',
-    'input-wifi-ssid', 'input-wifi-pass', 'select-wifi-enc',
+    'input-wifi-ssid', 'input-wifi-pass', 'select-wifi-enc', 'input-wifi-hidden',
     'input-vcard-name', 'input-vcard-tel', 'input-vcard-email', 'input-vcard-org',
     'input-text-free'
   ];

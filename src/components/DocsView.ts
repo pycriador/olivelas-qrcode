@@ -140,6 +140,22 @@ curl -s -G "https://quickchart.io/qr" \
   --data-urlencode "light=ffffff" \
   -o qrcode_pix.png</code></pre>
           </div>
+
+          <!-- Exemplo 1.6: Wi-Fi Conexão Automática -->
+          <div class="code-example-block">
+            <div class="code-header">
+              <span class="code-title">Exemplo 6: Download de QR Code Wi-Fi Universal (ZXing / iOS / Android)</span>
+              <button class="btn-copy-code" data-target="code-curl-6">Copiar Comando Wi-Fi</button>
+            </div>
+            <pre><code id="code-curl-6"># Baixar QR Code de Wi-Fi para conexão automática (apontou a câmera, conectou)
+curl -s -G "https://quickchart.io/qr" \
+  --data-urlencode "text=WIFI:T:WPA;S:MinhaCasa_5G;P:minhasenha123;;" \
+  --data-urlencode "size=1024" \
+  --data-urlencode "format=png" \
+  --data-urlencode "dark=0284c7" \
+  --data-urlencode "light=ffffff" \
+  -o qrcode_wifi.png</code></pre>
+          </div>
         </section>
 
         <!-- SEÇÃO 2: SCRIPT PYTHON OFICIAL -->
@@ -168,10 +184,13 @@ python scripts/generate_qr.py --url "https://github.com/pycriador/olivelas-qrcod
 # 2. Gerar QR Code Pix Oficial (Padrão BACEN / BR Code)
 python scripts/generate_qr.py --pix-key "12345678900" --pix-name "Willian Jesus" --pix-amount 25.00 -o pix_25.png
 
-# 3. Gerar com cor customizada (#4f46e5) e resolução 1024px
+# 3. Gerar QR Code Wi-Fi para conexão automática (iOS e Android)
+python scripts/generate_qr.py --wifi-ssid "MinhaCasa_5G" --wifi-pass "minhasenha123" -o wifi_casa.png
+
+# 4. Gerar com cor customizada (#4f46e5) e resolução 1024px
 python scripts/generate_qr.py --url "https://meusite.com" --color "#4f46e5" --size 1024 --output meu_qrcode.png
 
-# 4. Encurtar automaticamente a URL antes de gerar o código
+# 5. Encurtar automaticamente a URL antes de gerar o código
 python scripts/generate_qr.py --url "https://meusite.com/artigo-longo" --shorten isgd --output qr_curto.png</code></pre>
           </div>
 

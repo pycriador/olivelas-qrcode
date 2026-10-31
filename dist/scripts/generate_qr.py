@@ -2,8 +2,9 @@
 """
 Olivelas QR Code Studio - CLI Generator
 Gera códigos QR Code em alta definição diretamente da linha de comando,
-com suporte a URLs, encurtamento automático, personalização de cores
-e geração de Pix Oficial (Padrão BACEN / BR Code / EMV QRCPS-MPM).
+com suporte a URLs, encurtamento automático, personalização de cores,
+geração de Pix Oficial (Padrão BACEN / BR Code / EMV QRCPS-MPM)
+e Wi-Fi Automático (Padrão Universal ZXing / iOS / Android).
 
 Funciona nativamente com a biblioteca padrão do Python (urllib),
 e aproveita 'qrcode' e 'PIL' se estiverem instalados.
@@ -75,6 +76,24 @@ def build_pix_brcode(key: str, name: str = "RECEBEDOR", city: str = "BRASILIA", 
     )
     return payload + crc16_ccitt(payload)
 
+def escape_wifi(text: str) -> str:
+    """Escapa caracteres especiais no padrão ZXing: \\, ;, ,, :, \"."""
+    if not text:
+        return ""
+    for ch in ["\\", ";", ",", ":", '"']:
+        text = text.replace(ch, f"\\{ch}")
+    return text
+
+def build_wifi_payload(ssid: str, password: str = "", encryption: str = "WPA", hidden: bool = False) -> str:
+    """Gera a string padronizada ZXing para conexão automática de Wi-Fi."""
+    esc_ssid = escape_wifi(ssid.strip())
+    payload = f"WIFI:T:{encryption};S:{esc_ssid};"
+    if encryption != "nopass":
+        payload += f"P:{escape_wifi(password.strip())};"
+    if hidden:
+        payload += "H:true;"
+    return payload + ";"
+
 def shorten_url(url: str, provider: str = "tinyurl") -> str:
     """Encurta a URL informada usando o provedor solicitado."""
     print(f"[*] Encurtando URL via {provider}...")
@@ -145,6 +164,12 @@ def main():
     parser.add_argument("--pix-amount", help="Valor em R$ (ex: 25.00)")
     parser.add_argument("--pix-txid", default="***", help="Identificador / TxID da transação (padrão: ***)")
 
+    # Parâmetros de Wi-Fi Universal ZXing
+    parser.add_argument("--wifi-ssid", help="Nome da rede Wi-Fi (SSID)")
+    parser.add_argument("--wifi-pass", default="", help="Senha da rede Wi-Fi")
+    parser.add_argument("--wifi-enc", default="WPA", choices=["WPA", "WEP", "nopass"], help="Criptografia (padrão: WPA)")
+    parser.add_argument("--wifi-hidden", action="store_true", help="Definir rede como oculta")
+
     args = parser.parse_args()
 
     if args.pix_key:
@@ -157,15 +182,25 @@ def main():
         )
         print(f"[Pix] Código EMV BR Code gerado:")
         print(f"      {target_data}")
+    elif args.wifi_ssid:
+        target_data = build_wifi_payload(
+            ssid=args.wifi_ssid,
+            password=args.wifi_pass,
+            encryption=args.wifi_enc,
+            hidden=args.wifi_hidden
+        )
+        print(f"[Wi-Fi] String ZXing gerada:")
+        print(f"        {target_data}")
     elif args.url:
         target_data = args.url
         if args.shorten:
             target_data = shorten_url(target_data, args.shorten)
             print(f"[+] URL encurtada: {target_data}")
     else:
-        print("[!] Erro: Você deve informar uma --url ou uma --pix-key.")
-        print("    Exemplo Pix: python scripts/generate_qr.py --pix-key 'meuemail@pix.com' --pix-amount 10.00 -o pix.png")
-        print("    Exemplo URL: python scripts/generate_qr.py --url 'https://meusite.com' -o site.png")
+        print("[!] Erro: Você deve informar uma --url, uma --pix-key ou um --wifi-ssid.")
+        print("    Exemplo Wi-Fi: python scripts/generate_qr.py --wifi-ssid 'MinhaCasa_5G' --wifi-pass 'minhasenha123' -o wifi.png")
+        print("    Exemplo Pix:   python scripts/generate_qr.py --pix-key 'meuemail@pix.com' --pix-amount 10.00 -o pix.png")
+        print("    Exemplo URL:   python scripts/generate_qr.py --url 'https://meusite.com' -o site.png")
         sys.exit(1)
 
     generate_qr(target_data, args.output, args.color, args.bg, args.size)

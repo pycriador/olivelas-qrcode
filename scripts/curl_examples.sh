@@ -32,3 +32,14 @@ curl -s -G "https://quickchart.io/qr" \
   --data-urlencode "light=ffffff" \
   -o qrcode_pix.png
 echo "[OK] Salvo em qrcode_pix.png (Pix EMV oficial)"
+
+echo "=== 5. Gerando QR Code Wi-Fi Universal (Padrão ZXing / iOS / Android) ==="
+WIFI_PAYLOAD="WIFI:T:WPA;S:MinhaCasa_5G;P:minhasenha123;;"
+curl -s -G "https://quickchart.io/qr" \
+  --data-urlencode "text=${WIFI_PAYLOAD}" \
+  --data-urlencode "size=1024" \
+  --data-urlencode "format=png" \
+  --data-urlencode "dark=0284c7" \
+  --data-urlencode "light=ffffff" \
+  -o qrcode_wifi.png
+echo "[OK] Salvo em qrcode_wifi.png (Wi-Fi conexão automática)"

@@ -5,6 +5,7 @@ Uma plataforma intuitiva, ultra-rápida e profissional desenvolvida em **TypeScr
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?logo=vite)
 ![Pix Oficial](https://img.shields.io/badge/Pix%20Oficial-BR%20Code%20EMV-32BCAD)
+![Wi-Fi Universal](https://img.shields.io/badge/Wi--Fi-ZXing%20Universal-0284c7)
 ![Estilos](https://img.shields.io/badge/Estilos%20e%20Presets-54%2B-indigo)
 ![Encurtadores](https://img.shields.io/badge/Encurtadores%20de%20URL-11%20Servi%C3%A7os-success)
 ![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages%20Ready-brightgreen)
@@ -59,7 +60,14 @@ Geração estrita de códigos Pix reconhecidos por **100% dos aplicativos bancá
 - **Valor fixo ou aberto**: Suporte a valor monetário pré-definido ou aberto para preenchimento pelo pagador.
 - **Botão Pix Copia e Cola**: Permite ao usuário copiar a linha de código EMV com 1 clique para colar em pagamentos online.
 
-### 5. 🛡️ Logotipos Oficiais do Wikimedia Commons
+### 5. 📶 Conexão Wi-Fi Automática (Padrão Universal ZXing / iOS / Android)
+Permite a qualquer pessoa conectar-se à rede sem digitar senhas longas, bastando apontar a câmera do smartphone:
+- **Padrão Internacional ZXing**: Formatação `WIFI:T:<tipo>;S:<ssid>;P:<senha>;H:<oculta>;;` rigorosamente compatível com iOS 11+, Android (Samsung, Pixel, Xiaomi, Motorola), Windows e macOS.
+- **Escape de Caracteres Especiais**: Tratamento estrito de caracteres reservados (`;`, `:`, `\`, `,`, `"`) no SSID e senha.
+- **Suporte a Redes Abertas e Ocultas**: Detecção e omissão do campo `P:` para redes abertas (`nopass`) e flag de rede oculta (`H:true`).
+- **Botão de Cópia Direta**: Copie a string padronizada com 1 clique para documentação ou scripts de infraestrutura.
+
+### 6. 🛡️ Logotipos Oficiais do Wikimedia Commons
 Logotipos vetoriais SVG autênticos, embutidos em escudos protetores 500x500 px que preservam o contraste e evitam deformação nos pontos do QR Code:
 - **WhatsApp**: [File:WhatsApp.svg](https://commons.wikimedia.org/wiki/File:WhatsApp.svg)
 - **Instagram**: [File:Instagram_logo_2016.svg](https://commons.wikimedia.org/wiki/File:Instagram_logo_2016.svg)
