@@ -37,8 +37,12 @@ jobs:
       - name: Build with Vite
         run: npm run build
 
-      - name: Copy scripts to dist
-        run: cp -r scripts dist/
+      - name: Ensure Scripts & Fallbacks in Dist
+        run: |
+          mkdir -p dist/scripts
+          cp -f scripts/generate_qr.py dist/scripts/
+          cp -f scripts/curl_examples.sh dist/scripts/
+          touch dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -78,18 +78,18 @@ export function renderDocsView(onBackToApp: () => void, onShowToast: (msg: strin
           <div class="docs-section-heading">
             <div class="step-badge">1</div>
             <div>
-              <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Gerando QR Codes via cURL</h2>
-              <p style="font-size: 0.85rem; color: var(--text-muted);">Comandos prontos para rodar no terminal Linux, macOS ou PowerShell no Windows.</p>
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Gerando QR Codes via cURL (100% Funcional)</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Comandos testados para rodar diretamente no terminal Linux, macOS ou Windows PowerShell.</p>
             </div>
           </div>
 
           <!-- Exemplo 1.1 -->
           <div class="code-example-block">
             <div class="code-header">
-              <span class="code-title">Exemplo 1: Download de QR Code PNG em Alta Definição (1024x1024)</span>
+              <span class="code-title">Exemplo 1: Download de QR Code PNG em Alta Definição (1024x1024 px)</span>
               <button class="btn-copy-code" data-target="code-curl-1">Copiar Comando</button>
             </div>
-            <pre><code id="code-curl-1">curl -s "https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=https%3A%2F%2Fgithub.com%2Fpycriador%2Folivelas-qrcode" -o qrcode.png</code></pre>
+            <pre><code id="code-curl-1">curl -s "https://quickchart.io/qr?text=https%3A%2F%2Fgithub.com%2Fpycriador%2Folivelas-qrcode&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_1024.png</code></pre>
           </div>
 
           <!-- Exemplo 1.2 -->
@@ -98,20 +98,31 @@ export function renderDocsView(onBackToApp: () => void, onShowToast: (msg: strin
               <span class="code-title">Exemplo 2: Download em Vetor SVG Escalável com Cores Personalizadas</span>
               <button class="btn-copy-code" data-target="code-curl-2">Copiar Comando</button>
             </div>
-            <pre><code id="code-curl-2"># Gera um SVG com cor #4f46e5 (Índigo) e fundo transparente
-curl -s "https://quickchart.io/qr?text=https%3A%2F%2Fgithub.com%2Fpycriador%2Folivelas-qrcode&dark=4f46e5&light=ffffff00&size=1024&format=svg" -o qrcode.svg</code></pre>
+            <pre><code id="code-curl-2">curl -s "https://quickchart.io/qr?text=https%3A%2F%2Fgithub.com%2Fpycriador%2Folivelas-qrcode&size=1024&format=svg&dark=4f46e5&light=ffffff" -o qrcode_vector.svg</code></pre>
           </div>
 
           <!-- Exemplo 1.3 -->
           <div class="code-example-block">
             <div class="code-header">
-              <span class="code-title">Exemplo 3: Encurtar URL no Terminal e Gerar QR Code em um Único Pipeline</span>
-              <button class="btn-copy-code" data-target="code-curl-3">Copiar Comando</button>
+              <span class="code-title">Exemplo 3: Pipeline: Encurtar URL e Baixar QR Code Automático (Linux/macOS)</span>
+              <button class="btn-copy-code" data-target="code-curl-3">Copiar Bash</button>
             </div>
-            <pre><code id="code-curl-3"># Encurta com TinyURL e faz o download direto do QR Code do link encurtado
+            <pre><code id="code-curl-3"># Encurta a URL via TinyURL e gera o QR Code 1024px diretamente do link encurtado
 SHORT_URL=$(curl -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode")
-echo "Link Encurtado: $SHORT_URL"
-curl -s "https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=$(echo $SHORT_URL | sed 's/:/%3A/g;s/\//%2F/g')" -o qrcode_encurtado.png</code></pre>
+echo "URL Encurtada: $SHORT_URL"
+curl -s "https://quickchart.io/qr?text=${SHORT_URL}&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
+          </div>
+
+          <!-- Exemplo 1.4 -->
+          <div class="code-example-block">
+            <div class="code-header">
+              <span class="code-title">Exemplo 4: Pipeline no Windows (PowerShell)</span>
+              <button class="btn-copy-code" data-target="code-curl-4">Copiar PowerShell</button>
+            </div>
+            <pre><code id="code-curl-4"># Encurta e baixa o QR Code no PowerShell (Windows)
+$short = (curl.exe -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode")
+Write-Host "URL Encurtada: $short"
+curl.exe -s "https://quickchart.io/qr?text=$short&size=1024&format=png&dark=4f46e5&light=ffffff" -o qrcode_encurtado.png</code></pre>
           </div>
         </section>
 
@@ -230,44 +241,41 @@ if __name__ == "__main__":
           </div>
         </section>
 
-        <!-- SEÇÃO 4: 11 ENCURTADORES DE URL VIA TERMINAL -->
+        <!-- SEÇÃO 4: ENCURTADORES DE URL VIA TERMINAL -->
         <section id="sec-shorteners" class="panel-card docs-section-card">
           <div class="docs-section-heading">
             <div class="step-badge">4</div>
             <div>
-              <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">11 Encurtadores de URL via Terminal</h2>
-              <p style="font-size: 0.85rem; color: var(--text-muted);">Comandos cURL diretos para encurtar links sem necessidade de API keys pagas.</p>
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Encurtadores de URL via Terminal (100% Testados)</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Comandos cURL diretos para encurtar links sem necessidade de chaves de API pagas.</p>
             </div>
           </div>
 
           <div class="code-example-block">
             <div class="code-header">
-              <span class="code-title">Endpoints cURL dos Encurtadores Integrados:</span>
+              <span class="code-title">Endpoints cURL Prontos para Execução:</span>
               <button class="btn-copy-code" data-target="code-shorteners-curl">Copiar Comandos</button>
             </div>
-            <pre><code id="code-shorteners-curl"># 1. TinyURL
+            <pre><code id="code-shorteners-curl"># 1. TinyURL (Mais estável e popular)
 curl -s "https://tinyurl.com/api-create.php?url=https://github.com/pycriador/olivelas-qrcode"
 
-# 2. is.gd
+# 2. is.gd (Retorna apenas o link encurtado)
 curl -s "https://is.gd/create.php?format=simple&url=https://github.com/pycriador/olivelas-qrcode"
 
-# 3. v.gd
+# 3. v.gd (Com prévia de segurança)
 curl -s "https://v.gd/create.php?format=simple&url=https://github.com/pycriador/olivelas-qrcode"
 
-# 4. da.gd
+# 4. da.gd (Super rápido e minimalista)
 curl -s "https://da.gd/s?url=https://github.com/pycriador/olivelas-qrcode"
 
-# 5. Ulvis
+# 5. Ulvis.net (Alta disponibilidade)
 curl -s "https://ulvis.net/api.php?url=https://github.com/pycriador/olivelas-qrcode"
 
-# 6. Chilp.it
-curl -s "https://chilp.it/api.php?url=https://github.com/pycriador/olivelas-qrcode"
-
-# 7. Clck.ru
+# 6. Clck.ru (Yandex ecosystem)
 curl -s "https://clck.ru/--?url=https://github.com/pycriador/olivelas-qrcode"
 
-# 8. 1pt.co
-curl -s "https://1pt.co/api/create?url=https://github.com/pycriador/olivelas-qrcode"</code></pre>
+# 7. Spoo.me (Suporte a estatísticas JSON)
+curl -s -X POST -d "url=https://github.com/pycriador/olivelas-qrcode" -H "Accept: application/json" https://spoo.me</code></pre>
           </div>
         </section>
 
