@@ -17,31 +17,31 @@ export function renderContentPanel(
       </h2>
     </div>
 
-    <!-- Abas de Tipos de Conteúdo -->
+    <!-- Segmented Control Elegante de Tipos de Conteúdo (Sem rolagem horizontal) -->
     <div class="content-type-tabs" role="tablist">
-      <button class="content-type-btn ${state.contentType === 'url' ? 'active' : ''}" data-type="url">
+      <button class="content-type-btn ${state.contentType === 'url' ? 'active' : ''}" data-type="url" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        Link / URL
+        <span>Link / URL</span>
       </button>
-      <button class="content-type-btn ${state.contentType === 'whatsapp' ? 'active' : ''}" data-type="whatsapp">
+      <button class="content-type-btn ${state.contentType === 'whatsapp' ? 'active' : ''}" data-type="whatsapp" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        WhatsApp
+        <span>WhatsApp</span>
       </button>
-      <button class="content-type-btn ${state.contentType === 'pix' ? 'active' : ''}" data-type="pix">
+      <button class="content-type-btn ${state.contentType === 'pix' ? 'active' : ''}" data-type="pix" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 12l10 10 10-10L12 2z"/><path d="M7 12h10"/><path d="M12 7v10"/></svg>
-        Pix
+        <span>Pix</span>
       </button>
-      <button class="content-type-btn ${state.contentType === 'wifi' ? 'active' : ''}" data-type="wifi">
+      <button class="content-type-btn ${state.contentType === 'wifi' ? 'active' : ''}" data-type="wifi" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-        Wi-Fi
+        <span>Wi-Fi</span>
       </button>
-      <button class="content-type-btn ${state.contentType === 'vcard' ? 'active' : ''}" data-type="vcard">
+      <button class="content-type-btn ${state.contentType === 'vcard' ? 'active' : ''}" data-type="vcard" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Contato
+        <span>Contato</span>
       </button>
-      <button class="content-type-btn ${state.contentType === 'text' ? 'active' : ''}" data-type="text">
+      <button class="content-type-btn ${state.contentType === 'text' ? 'active' : ''}" data-type="text" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="12" x2="3" y2="12"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        Texto
+        <span>Texto</span>
       </button>
     </div>
 

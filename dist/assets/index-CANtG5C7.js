@@ -153,31 +153,31 @@ var e=Object.create,t=Object.defineProperty,n=Object.getOwnPropertyDescriptor,r=
       </h2>
     </div>
 
-    <!-- Abas de Tipos de Conteúdo -->
+    <!-- Segmented Control Elegante de Tipos de Conteúdo (Sem rolagem horizontal) -->
     <div class="content-type-tabs" role="tablist">
-      <button class="content-type-btn ${e.contentType===`url`?`active`:``}" data-type="url">
+      <button class="content-type-btn ${e.contentType===`url`?`active`:``}" data-type="url" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        Link / URL
+        <span>Link / URL</span>
       </button>
-      <button class="content-type-btn ${e.contentType===`whatsapp`?`active`:``}" data-type="whatsapp">
+      <button class="content-type-btn ${e.contentType===`whatsapp`?`active`:``}" data-type="whatsapp" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        WhatsApp
+        <span>WhatsApp</span>
       </button>
-      <button class="content-type-btn ${e.contentType===`pix`?`active`:``}" data-type="pix">
+      <button class="content-type-btn ${e.contentType===`pix`?`active`:``}" data-type="pix" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 12l10 10 10-10L12 2z"/><path d="M7 12h10"/><path d="M12 7v10"/></svg>
-        Pix
+        <span>Pix</span>
       </button>
-      <button class="content-type-btn ${e.contentType===`wifi`?`active`:``}" data-type="wifi">
+      <button class="content-type-btn ${e.contentType===`wifi`?`active`:``}" data-type="wifi" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-        Wi-Fi
+        <span>Wi-Fi</span>
       </button>
-      <button class="content-type-btn ${e.contentType===`vcard`?`active`:``}" data-type="vcard">
+      <button class="content-type-btn ${e.contentType===`vcard`?`active`:``}" data-type="vcard" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Contato
+        <span>Contato</span>
       </button>
-      <button class="content-type-btn ${e.contentType===`text`?`active`:``}" data-type="text">
+      <button class="content-type-btn ${e.contentType===`text`?`active`:``}" data-type="text" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="12" x2="3" y2="12"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        Texto
+        <span>Texto</span>
       </button>
     </div>
 
@@ -363,22 +363,26 @@ var e=Object.create,t=Object.defineProperty,n=Object.getOwnPropertyDescriptor,r=
         </div>
         <span class="preset-title">${r.name}</span>
       `,i.addEventListener(`click`,()=>{n.querySelectorAll(`.preset-card`).forEach(e=>e.classList.remove(`active`)),i.classList.add(`active`),t(r)}),a.appendChild(i)})};return n.innerHTML=`
-    <!-- Barra de Busca e Filtros -->
-    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
-      <div style="flex: 1; min-width: 220px; position: relative;">
-        <input type="text" id="preset-search-input" class="input-text no-icon" placeholder="Buscar entre os 54 modelos (ex: Indigo, Instagram, Luxo...)" style="padding-left: 2.2rem; font-size: 0.85rem;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <!-- Barra de Busca Moderna -->
+    <div class="preset-search-container">
+      <div class="preset-search-input-wrap">
+        <svg class="preset-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="preset-search-input" class="preset-search-input" placeholder="Buscar entre os 54 modelos (ex: Indigo, Instagram, Luxo, Neon...)" autocomplete="off">
       </div>
     </div>
 
-    <div class="preset-filter-bar">
-      <button class="filter-chip active" data-cat="all">Todos (54)</button>
-      <button class="filter-chip" data-cat="popular">🌟 Populares</button>
-      <button class="filter-chip" data-cat="business">💼 Corporativo & Luxo</button>
-      <button class="filter-chip" data-cat="creative">🎨 Gradientes Vibrantes</button>
-      <button class="filter-chip" data-cat="social">📱 Redes Sociais</button>
-      <button class="filter-chip" data-cat="dark">🌑 AMOLED & Cyber</button>
-      <button class="filter-chip" data-cat="pastel">🌸 Tons Pastel</button>
+    <!-- Filtros de Categoria em Chips Fluidos e Elegantes -->
+    <div class="preset-filter-bar" role="tablist">
+      <button class="filter-chip active" data-cat="all" type="button">
+        <span>Todos</span>
+        <span class="chip-count">54</span>
+      </button>
+      <button class="filter-chip" data-cat="popular" type="button"><span>🌟 Populares</span></button>
+      <button class="filter-chip" data-cat="business" type="button"><span>💼 Corporativo & Luxo</span></button>
+      <button class="filter-chip" data-cat="creative" type="button"><span>🎨 Gradientes Vibrantes</span></button>
+      <button class="filter-chip" data-cat="social" type="button"><span>📱 Redes Sociais</span></button>
+      <button class="filter-chip" data-cat="dark" type="button"><span>🌑 AMOLED & Cyber</span></button>
+      <button class="filter-chip" data-cat="pastel" type="button"><span>🌸 Tons Pastel</span></button>
     </div>
 
     <!-- Grade Dinâmica -->

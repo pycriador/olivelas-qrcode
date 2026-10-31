@@ -50,22 +50,26 @@ export function renderPresetGallery(
   };
 
   container.innerHTML = `
-    <!-- Barra de Busca e Filtros -->
-    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
-      <div style="flex: 1; min-width: 220px; position: relative;">
-        <input type="text" id="preset-search-input" class="input-text no-icon" placeholder="Buscar entre os 54 modelos (ex: Indigo, Instagram, Luxo...)" style="padding-left: 2.2rem; font-size: 0.85rem;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <!-- Barra de Busca Moderna -->
+    <div class="preset-search-container">
+      <div class="preset-search-input-wrap">
+        <svg class="preset-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="preset-search-input" class="preset-search-input" placeholder="Buscar entre os 54 modelos (ex: Indigo, Instagram, Luxo, Neon...)" autocomplete="off">
       </div>
     </div>
 
-    <div class="preset-filter-bar">
-      <button class="filter-chip active" data-cat="all">Todos (54)</button>
-      <button class="filter-chip" data-cat="popular">🌟 Populares</button>
-      <button class="filter-chip" data-cat="business">💼 Corporativo & Luxo</button>
-      <button class="filter-chip" data-cat="creative">🎨 Gradientes Vibrantes</button>
-      <button class="filter-chip" data-cat="social">📱 Redes Sociais</button>
-      <button class="filter-chip" data-cat="dark">🌑 AMOLED & Cyber</button>
-      <button class="filter-chip" data-cat="pastel">🌸 Tons Pastel</button>
+    <!-- Filtros de Categoria em Chips Fluidos e Elegantes -->
+    <div class="preset-filter-bar" role="tablist">
+      <button class="filter-chip active" data-cat="all" type="button">
+        <span>Todos</span>
+        <span class="chip-count">54</span>
+      </button>
+      <button class="filter-chip" data-cat="popular" type="button"><span>🌟 Populares</span></button>
+      <button class="filter-chip" data-cat="business" type="button"><span>💼 Corporativo & Luxo</span></button>
+      <button class="filter-chip" data-cat="creative" type="button"><span>🎨 Gradientes Vibrantes</span></button>
+      <button class="filter-chip" data-cat="social" type="button"><span>📱 Redes Sociais</span></button>
+      <button class="filter-chip" data-cat="dark" type="button"><span>🌑 AMOLED & Cyber</span></button>
+      <button class="filter-chip" data-cat="pastel" type="button"><span>🌸 Tons Pastel</span></button>
     </div>
 
     <!-- Grade Dinâmica -->
