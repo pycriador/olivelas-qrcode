@@ -62,10 +62,9 @@
   padding: 0;
 }
 
-html, body {
-  overflow-x: hidden;
-  max-width: 100%;
-  width: 100%;
+html {
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
@@ -77,6 +76,9 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip; /* clip impede rolagem horizontal sem criar contexto que quebre position: sticky */
+  max-width: 100%;
+  width: 100%;
 }
 
 #app {
@@ -264,7 +266,8 @@ body {
   min-width: 0;
   max-width: 100%;
   position: relative;
-  height: 100%;
+  align-self: stretch;
+  height: auto;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -878,8 +881,9 @@ body {
 /* Painel de Visualização & Coluna Lateral FIXA ELEGANTE */
 .preview-sticky-card {
   position: sticky;
-  top: 5.25rem;
+  top: 5.5rem;
   align-self: start;
+  z-index: 30;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -891,7 +895,13 @@ body {
   width: 100%;
   max-width: 100%;
   overflow: visible; /* SEM NENHUMA BARRA DE ROLAGEM */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   transition: all 0.25s ease;
+}
+
+.preview-sticky-card::-webkit-scrollbar {
+  display: none;
 }
 
 [data-theme="dark"] .preview-sticky-card {

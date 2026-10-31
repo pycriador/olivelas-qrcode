@@ -1,5 +1,5 @@
 import { QRState, ContentType } from '../types';
-import { URL_SHORTENERS } from '../services/shorteners';
+import { URL_SHORTENERS, shortenUrlWithFallback } from '../services/shorteners';
 
 export function renderContentPanel(
   state: QRState,
@@ -71,7 +71,10 @@ export function renderContentPanel(
 
         <div class="shortener-controls-row">
           <select id="select-shortener-provider" class="shortener-select" aria-label="Selecione o encurtador">
-            ${URL_SHORTENERS.map(s => `<option value="${s.id}">${s.name} (${s.domain})</option>`).join('')}
+            ${URL_SHORTENERS.map(s => {
+              const tag = s.id === 'isgd' ? ' (Nativo) ★ Recomendado' : (['vgd', 'dagd', 'clckru'].includes(s.id) ? ' (Nativo)' : '');
+              return `<option value="${s.id}" ${s.id === 'isgd' ? 'selected' : ''}>${s.name}${tag}</option>`;
+            }).join('')}
           </select>
           <button type="button" id="btn-execute-shorten" class="btn-shorten-action">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -234,23 +237,28 @@ export function renderContentPanel(
     }
 
     const providerId = selectShortener.value;
-    const provider = URL_SHORTENERS.find(p => p.id === providerId) || URL_SHORTENERS[0];
-
     btnShorten.disabled = true;
     shortenLabel.textContent = 'Encurtando...';
 
     try {
-      const shortUrl = await provider.shorten(urlToShorten);
-      if (shortUrl && shortUrl.startsWith('http')) {
-        urlInput.value = shortUrl;
-        onUpdateState({ rawUrl: shortUrl, data: shortUrl });
-        await navigator.clipboard.writeText(shortUrl);
-        onShowToast(`Encurtado com ${provider.name} e copiado para a área de transferência!`);
+      const res = await shortenUrlWithFallback(urlToShorten, providerId);
+      if (res && res.shortUrl) {
+        urlInput.value = res.shortUrl;
+        onUpdateState({ rawUrl: res.shortUrl, data: res.shortUrl });
+        try {
+          await navigator.clipboard.writeText(res.shortUrl);
+        } catch {}
+        
+        if (res.usedFallback) {
+          onShowToast(`Encurtado com ${res.providerName} (alta disponibilidade)! Copiado!`);
+        } else {
+          onShowToast(`Encurtado via ${res.providerName}! Link copiado com sucesso!`);
+        }
       } else {
-        throw new Error('Retorno inválido');
+        throw new Error('Retorno vazio');
       }
     } catch (err: any) {
-      onShowToast(`Não foi possível encurtar via ${provider.name}. Tente outro provedor da lista.`);
+      onShowToast(`Erro ao encurtar: ${err.message || 'Tente novamente.'}`);
     } finally {
       btnShorten.disabled = false;
       shortenLabel.textContent = 'Encurtar URL';

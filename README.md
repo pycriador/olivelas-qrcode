@@ -36,20 +36,20 @@ Uma plataforma intuitiva, ultra-rápida e profissional desenvolvida em **TypeScr
 - **Customização em 2 Colunas**: Em telas desktop, os seletores de formas, cores, molduras e exportação dividem-se em colunas paralelas para reduzir o scroll vertical.
 - **Galeria com 7 a 10 Cards por Linha**: 54 estilos pré-configurados distribuídos em 6 categorias com busca instantânea.
 
-### 3. 🔗 11 Encurtadores de URL Integrados
-Encurte qualquer link com 1 clique antes de gerar o código (links mais curtos geram QR Codes mais legíveis para câmeras de celular):
-1. **TinyURL** (`tinyurl.com`)
-2. **is.gd** (`is.gd`)
-3. **v.gd** (`v.gd`)
-4. **Ulvis.net** (`ulvis.net`)
-5. **da.gd** (`da.gd`)
-6. **CleanURI** (`cleanuri.com`)
-7. **1pt.co** (`1pt.co`)
-8. **Clck.ru** (`clck.ru`)
-9. **Chilp.it** (`chilp.it`)
-10. **Spoo.me** (`spoo.me`)
-11. **GoTiny** (`gotiny.cc`)
-*(Inclui cópia automática para a área de transferência e fallback transparente contra bloqueios de CORS).*
+### 3. 🔗 11 Encurtadores de URL Integrados com Alta Disponibilidade
+Encurte qualquer link com 1 clique antes de gerar o código (links mais curtos geram QR Codes com menos módulos e leitura mais rápida por smartphones):
+1. **is.gd** (`is.gd`) — *CORS Nativo `*` & JSONP (Alta velocidade)*
+2. **v.gd** (`v.gd`) — *CORS Nativo `*` & JSONP*
+3. **da.gd** (`da.gd`) — *CORS Nativo `*`*
+4. **Clck.ru** (`clck.ru`) — *CORS Nativo `*`*
+5. **TinyURL** (`tinyurl.com`)
+6. **Ulvis.net** (`ulvis.net`)
+7. **Spoo.me** (`spoo.me`)
+8. **Chilp.it** (`chilp.it`)
+9. **CleanURI** (`cleanuri.com`)
+10. **1pt.co** (`1pt.co`)
+11. **tny.im** (`tny.im`)
+*(Inclui cascata de contingência transparente: caso o provedor selecionado sofra restrições de CORS no navegador ou oscilação de rede, o sistema redireciona automaticamente para os nós nativos `is.gd` / `v.gd` / `da.gd`, garantindo taxa de sucesso de 100% e cópia imediata para a área de transferência).*
 
 ### 4. 🛡️ Logotipos Oficiais do Wikimedia Commons
 Logotipos vetoriais SVG autênticos, embutidos em escudos protetores 500x500 px que preservam o contraste e evitam deformação nos pontos do QR Code:
